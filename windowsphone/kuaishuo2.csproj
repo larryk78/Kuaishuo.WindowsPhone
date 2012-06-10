@@ -79,6 +79,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NotepadLookupConvertor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\BingTranslator\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -133,6 +134,8 @@
     </None>
     <None Include="Service References\BingTranslator\SoapService.wsdl" />
     <Resource Include="Images\CopyButton.png" />
+    <Resource Include="Images\appbar.add.rest.png" />
+    <Resource Include="Images\appbar.delete.rest.png" />
     <Content Include="Images\appbar.feature.settings.rest.png" />
     <Resource Include="Images\appbar.questionmark.rest.png" />
     <Resource Include="Images\appbar.transport.play.rest.png" />

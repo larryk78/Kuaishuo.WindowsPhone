@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO.IsolatedStorage;
+
+using CC_CEDICT.WindowsPhone;
 
 namespace kuaishuo2
 {
@@ -74,6 +77,21 @@ namespace kuaishuo2
             set
             {
                 if (AddOrUpdateValue(AudioQualitySettingKeyName, value))
+                    Save();
+            }
+        }
+
+        const string NotepadItemsSettingKeyName = "NotepadItemsSetting";
+        List<int> NotepadItemsSettingDefault = new List<int>();
+        public List<int> NotepadItemsSetting
+        {
+            get
+            {
+                return GetValueOrDefault<List<int>>(NotepadItemsSettingKeyName, NotepadItemsSettingDefault);
+            }
+            set
+            {
+                if (AddOrUpdateValue(NotepadItemsSettingKeyName, value))
                     Save();
             }
         }

@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -22,7 +23,7 @@ namespace kuaishuo2
         public MainPage()
         {
             InitializeComponent();
-            DataContext = App.ViewModel;
+            SearchPane.DataContext = App.ViewModel;
             TextToSpeech dummy = new TextToSpeech(null); // to initialise XNA framework
             this.Loaded += new RoutedEventHandler(MainPage_Loaded);
         }
@@ -163,9 +164,9 @@ namespace kuaishuo2
                 Status.Visibility = System.Windows.Visibility.Visible;
                 App.ViewModel.ClearData();
             }
-            else
+            else // replace old search results with new
             {
-                previous = -1; // reset expanded item
+                prev[Results.Name] = -1; // override expansion marker
                 Status.Text = String.Format("Showing results for '{0}' (omitted '{1}')", s.LastQuery, s.Ignored);
                 Status.Visibility = s.SmartSearch ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
                 App.ViewModel.LoadData(results);
@@ -218,20 +219,21 @@ namespace kuaishuo2
 
         #region expand/collapse list items
 
-        int previous = -1;
+        Dictionary<string, int> prev = new Dictionary<string, int>();
         void Results_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int item = Results.SelectedIndex;
+            ListBox list = (ListBox)sender;
+            int item = list.SelectedIndex;
             if (item == -1)
                 return;
 
-            ListBox list = (ListBox)sender;
+            int previous = prev.ContainsKey(list.Name) ? prev[list.Name] : -1;
             if (previous != item)
             {
                 ToggleView(list, item, true);
                 if (previous != -1)
                     ToggleView(list, previous, false);
-                previous = item;
+                prev[list.Name] = item;
             }
 
             Results.SelectedIndex = -1; // reset
@@ -285,6 +287,64 @@ namespace kuaishuo2
             {
                 return null;
             }
+        }
+
+        #endregion
+
+        #region notepad view (inc. add/remove items)
+
+        MainViewModel notes;
+        void pivot_LoadingPivotItem(object sender, PivotItemEventArgs e)
+        {
+            if (!e.Item.Equals(NotepadPane)) // only handle switching to Notepad
+                return;
+
+            if (notes == null)
+                LoadNotes();
+
+            NotepadStatus.Text = (notes.Items.Count == 0)
+                ? "There are no entries in your notepad.\nSearch then use [+] button to add entries."
+                : "";
+        }
+
+        void LoadNotes()
+        {
+            Settings settings = new Settings();
+            List<DictionaryRecord> items = new List<DictionaryRecord>();
+            foreach (int id in settings.NotepadItemsSetting)
+                items.Add(d[id]);
+            items.Reverse();
+            notes = new MainViewModel();
+            notes.LoadData(items);
+            NotepadPane.DataContext = notes;
+        }
+
+        void NotepadButton_Click(object sender, RoutedEventArgs e)
+        {
+            Settings settings = new Settings();
+            List<int> items = settings.NotepadItemsSetting;
+            Button button = (Button)sender;
+            int i;
+            int.TryParse(button.Tag.ToString(), out i);
+            items.Add(i);
+            settings.NotepadItemsSetting = items;
+            LoadNotes();
+            prev[NotepadItems.Name] = -1; // override expansion marker
+            button.IsEnabled = false;
+            pivot.SelectedIndex = pivot.Items.IndexOf(NotepadPane);
+        }
+
+        void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Settings settings = new Settings();
+            List<int> items = settings.NotepadItemsSetting;
+            Button button = (Button)sender;
+            int i;
+            int.TryParse(button.Tag.ToString(), out i);
+            items.Remove(i);
+            settings.NotepadItemsSetting = items;
+            LoadNotes();
+            prev[NotepadItems.Name] = -1; // override expansion marker
         }
 
         #endregion
