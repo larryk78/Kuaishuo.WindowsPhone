@@ -158,6 +158,10 @@ namespace kuaishuo2
             if (results.Count == 0 && s.Total > 0) // try again
                 results = s.Search(Query.Text);
 
+            // reset things that need to be reset :)
+            prev[Results.Name] = -1; // override expansion marker
+            disabledNotepadButtons.Clear(); // empty list of buttons that don't exist any more :)
+
             if (results.Count == 0)
             {
                 Status.Text = String.Format("No results for '{0}'. Try another search.", Query.Text.Trim());
@@ -166,7 +170,6 @@ namespace kuaishuo2
             }
             else // replace old search results with new
             {
-                prev[Results.Name] = -1; // override expansion marker
                 Status.Text = String.Format("Showing results for '{0}' (omitted '{1}')", s.LastQuery, s.Ignored);
                 Status.Visibility = s.SmartSearch ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
                 App.ViewModel.LoadData(results);
@@ -298,12 +301,15 @@ namespace kuaishuo2
         {
             if (!e.Item.Equals(NotepadPane)) // only handle switching to Notepad
                 return;
-
             if (notes == null)
                 LoadNotes();
+            UpdateNotepadStatus();
+        }
 
+        void UpdateNotepadStatus()
+        {
             NotepadStatus.Text = (notes.Items.Count == 0)
-                ? "There are no entries in your notepad.\nSearch then use [+] button to add entries."
+                ? "\nThere are no entries in your notepad.\nSearch then use (+) button to add entries."
                 : "";
         }
 
@@ -319,6 +325,7 @@ namespace kuaishuo2
             NotepadPane.DataContext = notes;
         }
 
+        Dictionary<int, Button> disabledNotepadButtons = new Dictionary<int, Button>();
         void NotepadButton_Click(object sender, RoutedEventArgs e)
         {
             Settings settings = new Settings();
@@ -331,6 +338,7 @@ namespace kuaishuo2
             LoadNotes();
             prev[NotepadItems.Name] = -1; // override expansion marker
             button.IsEnabled = false;
+            disabledNotepadButtons[i] = button;
             pivot.SelectedIndex = pivot.Items.IndexOf(NotepadPane);
         }
 
@@ -345,6 +353,9 @@ namespace kuaishuo2
             settings.NotepadItemsSetting = items;
             LoadNotes();
             prev[NotepadItems.Name] = -1; // override expansion marker
+            if (disabledNotepadButtons.ContainsKey(i))
+                disabledNotepadButtons[i].IsEnabled = true;
+            UpdateNotepadStatus();
         }
 
         #endregion
