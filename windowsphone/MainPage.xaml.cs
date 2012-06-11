@@ -44,40 +44,6 @@ namespace kuaishuo2
                 LoadDictionary();
         }
 
-        #region handle device rotation
-
-        string defaultHeader;
-        Thickness defaultMargin;
-        Thickness landscapeMargin;
-        protected override void OnOrientationChanged(OrientationChangedEventArgs e)
-        {
-            if (defaultHeader == null)
-            {
-                defaultHeader = (string)SearchPane.Header;
-                defaultMargin = SearchPaneContent.Margin;
-                landscapeMargin = new Thickness(defaultMargin.Left, -105, defaultMargin.Right, defaultMargin.Bottom);
-            }
-
-            switch (e.Orientation & PageOrientation.Portrait)
-            {
-                case 0: // landscape
-                    Results.Height = 360;
-                    ApplicationBar.IsVisible = false; // hide the appbar to make more space
-                    SearchPane.Header = "";
-                    SearchPaneContent.Margin = landscapeMargin;
-                    break;
-                default: // landscape
-                    Results.Height = 540;
-                    ApplicationBar.IsVisible = true;
-                    SearchPane.Header = defaultHeader;
-                    SearchPaneContent.Margin = defaultMargin;
-                    break;
-            }
-            base.OnOrientationChanged(e);
-        }
-
-        #endregion
-
         #region decompress LZMA resources (dictionary, indexes)
 
         int inProgress = 0;
