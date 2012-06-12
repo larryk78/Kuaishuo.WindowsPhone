@@ -51,6 +51,7 @@ namespace kuaishuo2
         {
             inProgress++;
             Resource2IsolatedStorageDecoder decoder = new Resource2IsolatedStorageDecoder();
+            Resource2IsolatedStorageDecoder.AllowConcurrentDecoding = false;
             decoder.ProgressChanged += new ProgressChangedEventHandler(decoder_ProgressChanged);
             decoder.RunWorkerCompleted += new RunWorkerCompletedEventHandler(decoder_RunWorkerCompleted);
             decoder.DecodeAsync(file + ".lzma", file);
