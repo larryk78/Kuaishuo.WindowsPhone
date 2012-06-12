@@ -95,5 +95,20 @@ namespace kuaishuo2
                     Save();
             }
         }
+
+        const string TraditionalChineseSettingKeyName = "TraditionalChineseSetting";
+        const bool TraditionalChineseSettingDefault = false;
+        public bool TraditionalChineseSetting
+        {
+            get
+            {
+                return GetValueOrDefault<bool>(TraditionalChineseSettingKeyName, TraditionalChineseSettingDefault);
+            }
+            set
+            {
+                if (AddOrUpdateValue(TraditionalChineseSettingKeyName, value))
+                    Save();
+            }
+        }
     }
 }

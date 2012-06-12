@@ -66,19 +66,19 @@ namespace kuaishuo2
             }
         }
 
-        private string _simplified;
-        public string SimplifiedChinese
+        private string _chinese;
+        public string Chinese
         {
             get
             {
-                return _simplified;
+                return _chinese;
             }
             set
             {
-                if (value != _simplified)
+                if (value != _chinese)
                 {
-                    _simplified = value;
-                    NotifyPropertyChanged("SimplifiedChinese");
+                    _chinese = value;
+                    NotifyPropertyChanged("Chinese");
                 }
             }
         }

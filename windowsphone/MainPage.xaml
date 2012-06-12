@@ -35,12 +35,12 @@
                                     <StackPanel x:Name="DefaultView" Margin="0,0,0,17">
                                         <TextBlock Text="{Binding Pinyin}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding English}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-5,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                                        <TextBlock Text="{Binding SimplifiedChinese}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-5,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
+                                        <TextBlock Text="{Binding Chinese}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-5,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
                                     <StackPanel x:Name="ExpandedView" Margin="0,0,0,17" Visibility="Collapsed">
                                         <TextBlock Text="{Binding Pinyin}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding EnglishWithNewlines}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-5,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                                        <TextBlock Text="{Binding SimplifiedChinese}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-5,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
+                                        <TextBlock Text="{Binding Chinese}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-5,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
                                     <StackPanel x:Name="ActionPanel" Margin="0,-10,0,10" Orientation="Horizontal" Visibility="Collapsed">
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=SearchPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>
@@ -63,12 +63,12 @@
                                     <StackPanel x:Name="DefaultView" Margin="0,0,0,17">
                                         <TextBlock Text="{Binding Pinyin}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding English}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-5,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                                        <TextBlock Text="{Binding SimplifiedChinese}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-5,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
+                                        <TextBlock Text="{Binding Chinese}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-5,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
                                     <StackPanel x:Name="ExpandedView" Margin="0,0,0,17" Visibility="Collapsed">
                                         <TextBlock Text="{Binding Pinyin}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding EnglishWithNewlines}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-5,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                                        <TextBlock Text="{Binding SimplifiedChinese}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-5,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
+                                        <TextBlock Text="{Binding Chinese}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-5,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
                                     <StackPanel x:Name="ActionPanel" Margin="0,-10,0,10" Orientation="Horizontal" Visibility="Collapsed">
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=NotepadPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>

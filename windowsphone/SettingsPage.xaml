@@ -33,22 +33,30 @@
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <StackPanel>
-                <TextBlock Text="Text-to-Speech Audio Quality" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
-                <TextBlock Text="Lo-Fi uses less bandwidth. Hi-Fi is loud and clear." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="lo-fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="80,0,20,0"/>
-                    <Slider Height="100" Width="120" x:Name="AudioQualitySlider" Value="{Binding Source={StaticResource settings}, Path=AudioQualitySetting, Mode=TwoWay}" ValueChanged="AudioQualitySlider_ValueChanged" Minimum="0" Maximum="1" Margin="0,0,0,-30"/>
-                    <TextBlock Text="hi-fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="20,0,0,0"/>
+            <ScrollViewer>
+                <StackPanel>
+                    <TextBlock Text="Text-to-Speech Audio Quality" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                    <TextBlock Text="Lo-Fi uses less bandwidth. Hi-Fi is loud and clear." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="lo-fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="80,0,20,0"/>
+                        <Slider Height="100" Width="120" x:Name="AudioQualitySlider" Value="{Binding Source={StaticResource settings}, Path=AudioQualitySetting, Mode=TwoWay}" ValueChanged="AudioQualitySlider_ValueChanged" Minimum="0" Maximum="1" Margin="0,0,0,-30"/>
+                        <TextBlock Text="hi-fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="20,0,0,0"/>
+                    </StackPanel>
+                    <TextBlock Text="Traditional Chinese Characters" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,20,12,0"/>
+                    <TextBlock Text="Used in Guangzhou, Hong Kong, Macau and Taiwan." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="enable" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="120,0,20,0"/>
+                        <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Margin="0,10,0,0" Name="TraditionalChineseCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=TraditionalChineseSetting, Mode=TwoWay}"  />
+                    </StackPanel>
+                    <TextBlock Text="Kuaishuo" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,10,12,0"/>
+                    <TextBlock Text="Thank you for choosing Kuaishuo! To report bugs or request features, please visit the Kuaishuo blog." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
+                    <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://www.knibb.co.uk/kuaishuo" Content="http://www.knibb.co.uk/kuaishuo"/>
+                    <TextBlock Text="CC-CEDICT" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,30,12,0"/>
+                    <TextBlock Text="Kuaishuo uses the CC-CEDICT dictionary: a free, community-maintained resource." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
+                    <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://cc-cedict.org/wiki" Content="http://cc-cedict.org/wiki/"/>
+                    <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://creativecommons.org/licenses/by-sa/3.0/" Content="CC-CEDICT License"/>
                 </StackPanel>
-                <TextBlock Text="Kuaishuo" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,30,12,0"/>
-                <TextBlock Text="Thank you for choosing Kuaishuo! To report bugs or request features, please visit the Kuaishuo blog." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
-                <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://www.knibb.co.uk/kuaishuo" Content="http://www.knibb.co.uk/kuaishuo"/>
-                <TextBlock Text="CC-CEDICT" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,30,12,0"/>
-                <TextBlock Text="Kuaishuo uses the CC-CEDICT dictionary: a free, community-maintained resource." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
-                <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://cc-cedict.org/wiki" Content="http://cc-cedict.org/wiki/"/>
-                <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://creativecommons.org/licenses/by-sa/3.0/" Content="CC-CEDICT License"/>
-            </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Grid>
  

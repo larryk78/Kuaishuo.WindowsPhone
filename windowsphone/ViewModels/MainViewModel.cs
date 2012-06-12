@@ -27,20 +27,33 @@ namespace kuaishuo2
         }
 
         public ObservableCollection<ItemViewModel> Items { get; private set; }
+
         public bool IsDataLoaded { get; private set; }
+
         public void LoadData(List<DictionaryRecord> items)
         {
             ClearData();
             this.NetworkAvailable = NetworkInterface.GetIsNetworkAvailable();
+
+            Settings settings = new Settings();
+            bool trad = settings.TraditionalChineseSetting;
+
             foreach (DictionaryRecord r in items)
+            {
+                // determine what Hanzi to show to the user
+                string chinese = (!trad || r.Chinese.Simplified.Equals(r.Chinese.Traditional))
+                    ? r.Chinese.Simplified                                                     // show only simplified
+                    : String.Format("{0} ({1})", r.Chinese.Simplified, r.Chinese.Traditional); // else "simple (trad)"
+
                 this.Items.Add(new ItemViewModel()
                 {
                     Pinyin = r.Chinese.Pinyin,
                     English = String.Join("; ", r.English),
                     EnglishWithNewlines = String.Join("\n", r.English),
-                    SimplifiedChinese = r.Chinese.Simplified,
+                    Chinese = chinese,
                     Index = r.Index
                 });
+            }
             this.IsDataLoaded = true;
         }
 
