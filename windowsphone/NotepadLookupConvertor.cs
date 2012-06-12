@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,8 @@ namespace kuaishuo2
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (DesignerProperties.IsInDesignTool)
+                return true;
             Settings settings = new Settings();
             return !settings.NotepadItemsSetting.Contains((int)value);
         }
