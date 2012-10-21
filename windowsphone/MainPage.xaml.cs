@@ -98,6 +98,8 @@ namespace kuaishuo2
                 defaultText = Query.Text;
             if (Query.Text.Equals(defaultText))
                 Query.Text = "";
+            else
+                Query.SelectAll();
             appBarVisibility = ApplicationBar.IsVisible;
             ApplicationBar.IsVisible = false; // otherwise annoying to accidentally touch ... when pressing -> (enter)
         }
