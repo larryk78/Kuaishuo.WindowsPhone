@@ -27,7 +27,7 @@
                 <StackPanel x:Name="SearchPaneContent" Margin="0,-12,-12,0" Orientation="Vertical" d:LayoutOverrides="Height">
                     <TextBox x:Name="Query" InputScope="Search" GotFocus="Query_GotFocus" LostFocus="Query_LostFocus" KeyDown="Query_KeyDown" Text="english, pin1yin1 or 中文"/>
                     <TextBlock x:Name="Status" Text=" " TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" />
-                    <ProgressBar x:Name="Progress"/>
+                    <ProgressBar x:Name="Progress" Visibility="Collapsed"/>
                     <ListBox x:Name="Results" ItemsSource="{Binding Items}" Height="550" SelectionChanged="Results_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
