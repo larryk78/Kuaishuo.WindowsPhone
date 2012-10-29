@@ -9,6 +9,7 @@ use strict;
 
 use Carp;
 use Data::Dumper;
+use Encode;
 use Lingua::ZH::CC_CEDICT::EN::Analyser;
 
 sub preprocess {
@@ -35,7 +36,7 @@ sub acceptRecord {
 sub insert {
     my $self = shift;
     my($name, $key, $index, $relevance) = @_;
-    $key = lc($key);
+    $key = encode('UTF-8', lc($key));
 
     if (!exists $self->{index}{$name}) {
         $self->{index}{$name} = { $key => { $index => $relevance } };
