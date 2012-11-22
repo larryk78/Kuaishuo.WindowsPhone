@@ -48,21 +48,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CC-CEDICT.WindowsPhone, Version=0.5.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\CC-CEDICT.WindowsPhone\Bin\Release\CC-CEDICT.WindowsPhone.dll</HintPath>
-    </Reference>
     <Reference Include="Coding4Fun.Phone.Controls">
       <HintPath>..\kuaishuo\Bin\Release\Coding4Fun.Phone.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls" />
+    <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="Microsoft.Xna.Framework" />
-    <Reference Include="SevenZip.Compression.LZMA.WindowsPhone, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\SevenZip.Compression.LZMA.WindowsPhone\Bin\Release\SevenZip.Compression.LZMA.WindowsPhone.dll</HintPath>
-    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows" />
@@ -80,6 +73,8 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="NotepadLookupConvertor.cs" />
+    <Compile Include="PinyinColorizer.cs" />
+    <Compile Include="PinyinColors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\BingTranslator\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -93,6 +88,7 @@
     <Compile Include="TextToSpeech.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="VisualTreeHelperHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -169,6 +165,16 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\BingTranslator\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CC-CEDICT.WindowsPhone\CC-CEDICT.WindowsPhone.csproj">
+      <Project>{3F2FB410-84C9-4457-B34D-3A990FEF20C4}</Project>
+      <Name>CC-CEDICT.WindowsPhone</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SevenZip.Compression.LZMA.WindowsPhone\SevenZip.Compression.LZMA.WindowsPhone\SevenZip.Compression.LZMA.WindowsPhone.csproj">
+      <Project>{1C51158D-735A-4829-9CE3-69F9FADFCB4F}</Project>
+      <Name>SevenZip.Compression.LZMA.WindowsPhone</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

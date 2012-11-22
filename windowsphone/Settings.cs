@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO.IsolatedStorage;
+using System.Windows;
 
 using CC_CEDICT.WindowsPhone;
 
@@ -14,56 +17,60 @@ namespace kuaishuo2
         {
         }
 
-        public bool AddOrUpdateValue(string Key, Object value)
+        public bool AddOrUpdateValue(string key, Object value)
         {
-            if (settings == null)
-                settings = IsolatedStorageSettings.ApplicationSettings;
-
-            bool valueChanged = false;
-
-            // If the key exists
-            if (settings.Contains(Key))
+            try
             {
-                // If the value has changed
-                if (settings[Key] != value)
+                if (settings == null)
+                    settings = IsolatedStorageSettings.ApplicationSettings;
+
+                if (!settings.Contains(key))
                 {
-                    // Store the new value
-                    settings[Key] = value;
-                    valueChanged = true;
+                    settings.Add(key, value);
+                    return true;
                 }
+
+                if (settings[key] != value)
+                {
+                    settings[key] = value;
+                    return true;
+                }
+
+                return false;
             }
-            // Otherwise create the key.
-            else
+            catch (Exception ex)
             {
-                settings.Add(Key, value);
-                valueChanged = true;
+                Debug.WriteLine("[Settings.AddOrUpdateValue] failed: {0}", ex.Message);
+                return false;
             }
-            return valueChanged;
         }
 
         public T GetValueOrDefault<T>(string Key, T defaultValue)
         {
-            if (settings == null)
-                settings = IsolatedStorageSettings.ApplicationSettings;
-
-            T value;
-
-            // If the key exists, retrieve the value.
-            if (settings.Contains(Key))
+            try
             {
-                value = (T)settings[Key];
+                if (settings == null)
+                    settings = IsolatedStorageSettings.ApplicationSettings;
+
+                return settings.Contains(Key) ? (T)settings[Key] : defaultValue;
             }
-            // Otherwise, use the default value.
-            else
+            catch (Exception ex)
             {
-                value = defaultValue;
+                Debug.WriteLine("[Settings.GetValueOrDefault<T>] failed: {0}", ex.Message);
+                return defaultValue;
             }
-            return value;
         }
 
         public void Save()
         {
-            settings.Save();
+            try
+            {
+                settings.Save();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("[Settings.Save] failed: {0}", ex.Message);
+            }
         }
 
         const string AudioQualitySettingKeyName = "AudioQualitySetting";
@@ -92,6 +99,21 @@ namespace kuaishuo2
             set
             {
                 if (AddOrUpdateValue(NotepadItemsSettingKeyName, value))
+                    Save();
+            }
+        }
+
+        const string PinyinColorSettingKeyName = "PinyinColorSetting";
+        const int PinyinColorSettingDefault = (int)PinyinColorScheme.Dummitt;
+        public int PinyinColorSetting
+        {
+            get
+            {
+                return GetValueOrDefault<int>(PinyinColorSettingKeyName, PinyinColorSettingDefault);
+            }
+            set
+            {
+                if (AddOrUpdateValue(PinyinColorSettingKeyName, value))
                     Save();
             }
         }

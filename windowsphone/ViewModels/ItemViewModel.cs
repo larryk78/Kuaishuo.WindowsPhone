@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
+using CC_CEDICT.WindowsPhone;
+
 namespace kuaishuo2
 {
     public class ItemViewModel : INotifyPropertyChanged

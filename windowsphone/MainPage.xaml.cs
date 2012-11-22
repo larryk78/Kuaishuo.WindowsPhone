@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Windows;
@@ -210,6 +211,7 @@ namespace kuaishuo2
             }
 
             Results.SelectedIndex = -1; // reset
+            
         }
 
         //Brush old;
@@ -219,9 +221,9 @@ namespace kuaishuo2
             if (item == null)
                 return;
             
-            StackPanel defaultView = FindStackPanelByName(item, "DefaultView");
-            StackPanel expandedView = FindStackPanelByName(item, "ExpandedView");
-            StackPanel actionPanel = FindStackPanelByName(item, "ActionPanel");
+            StackPanel defaultView = VisualTreeHelperHelper.FindFrameworkElementByName<StackPanel>(item, "DefaultView");
+            StackPanel expandedView = VisualTreeHelperHelper.FindFrameworkElementByName<StackPanel>(item, "ExpandedView");
+            StackPanel actionPanel = VisualTreeHelperHelper.FindFrameworkElementByName<StackPanel>(item, "ActionPanel");
 
             if (expand)
             {
@@ -237,28 +239,6 @@ namespace kuaishuo2
                 expandedView.Visibility = Visibility.Collapsed;
                 actionPanel.Visibility = Visibility.Collapsed;
                 //item.BorderBrush = old;
-            }
-        }
-
-        StackPanel FindStackPanelByName(DependencyObject parent, string name)
-        {
-            try
-            {
-                var count = VisualTreeHelper.GetChildrenCount(parent);
-                for (int i = 0; i < count; i++)
-                {
-                    var child = VisualTreeHelper.GetChild(parent, i);
-                    if (child != null && child is StackPanel && ((StackPanel)child).Name.Equals(name))
-                        return (StackPanel)child;
-                    var result = FindStackPanelByName(child, name);
-                    if (result != null)
-                        return result;
-                }
-                return null;
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
             }
         }
 
@@ -326,6 +306,24 @@ namespace kuaishuo2
             if (disabledNotepadButtons.ContainsKey(i))
                 disabledNotepadButtons[i].IsEnabled = true;
             UpdateNotepadStatus();
+        }
+
+        #endregion
+
+        #region colour Pinyin
+
+        private void Pinyin_Loaded(object sender, RoutedEventArgs e)
+        {
+            Settings settings = new Settings();
+            TextBlock block = (TextBlock)sender;
+            int i;
+            int.TryParse(block.Tag.ToString(), out i);
+            DictionaryRecord r = d[i];
+            if (r != null)
+            {
+                PinyinColorizer p = new PinyinColorizer();
+                p.Colorize(block, r, (PinyinColorScheme)settings.PinyinColorSetting);
+            }
         }
 
         #endregion
