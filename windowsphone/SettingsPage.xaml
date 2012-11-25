@@ -82,7 +82,7 @@
                     <TextBlock Text="CC-CEDICT" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,30,12,0"/>
                     <TextBlock Text="Kuaishuo uses the CC-CEDICT dictionary: a free, community-maintained resource." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
                     <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://cc-cedict.org/wiki" Content="http://cc-cedict.org/wiki/"/>
-                    <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://creativecommons.org/licenses/by-sa/3.0/" Content="CC-CEDICT License"/>
+                    <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://creativecommons.org/licenses/by-sa/3.0/" Content="CC-CEDICT License" Margin="0,0,0,20"/>
                 </StackPanel>
             </ScrollViewer>
         </Grid>

@@ -6,6 +6,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Input;
@@ -19,21 +20,23 @@ namespace kuaishuo2
 {
     public class PinyinColorizer
     {
+        PinyinColorOptions options;
+
         public PinyinColorizer()
         {
+            options = new PinyinColorOptions();
         }
 
-        public void Colorize(TextBlock block, DictionaryRecord record, PinyinColorScheme selected)
+        public void Colorize(TextBlock textBlock, DictionaryRecord record, PinyinColorScheme selected)
         {
             if (selected == PinyinColorScheme.None)
             {
-                block.Text = record.Chinese.Pinyin;
+                textBlock.Text = record.Chinese.Pinyin;
                 return;
             }
-
-            PinyinColorOptions options = new PinyinColorOptions();
-            PinyinColors colors = options[selected];
-            block.Text = "";
+            
+            PinyinColorPalette colors = options[selected];
+            textBlock.Text = "";
             bool first = true;
 
             foreach (Chinese.Character c in record.Chinese.Characters)
@@ -43,7 +46,7 @@ namespace kuaishuo2
                 Color color = colors[c.Pinyin.Tone];
                 if (color != Colors.Black) // black is special
                     run.Foreground = new SolidColorBrush(color);
-                block.Inlines.Add(run);
+                textBlock.Inlines.Add(run);
                 first = false;
             }
         }

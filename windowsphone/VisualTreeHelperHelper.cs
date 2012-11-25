@@ -29,7 +29,7 @@ namespace kuaishuo2
                 }
                 return null;
             }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
                 return null;
             }

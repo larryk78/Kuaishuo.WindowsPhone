@@ -17,6 +17,8 @@ namespace kuaishuo2
 {
     public class ItemViewModel : INotifyPropertyChanged
     {
+        public DictionaryRecord Record;
+
         private string _pinyin;
         public string Pinyin
         {

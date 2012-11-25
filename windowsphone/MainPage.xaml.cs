@@ -312,18 +312,14 @@ namespace kuaishuo2
 
         #region colour Pinyin
 
-        private void Pinyin_Loaded(object sender, RoutedEventArgs e)
+        private void Pinyin_Loaded(object sender, EventArgs e)
         {
+            TextBlock textBlock = (TextBlock)sender;
+            ItemViewModel item = (ItemViewModel)textBlock.DataContext;
+            DictionaryRecord record = item.Record;
+            PinyinColorizer p = new PinyinColorizer();
             Settings settings = new Settings();
-            TextBlock block = (TextBlock)sender;
-            int i;
-            int.TryParse(block.Tag.ToString(), out i);
-            DictionaryRecord r = d[i];
-            if (r != null)
-            {
-                PinyinColorizer p = new PinyinColorizer();
-                p.Colorize(block, r, (PinyinColorScheme)settings.PinyinColorSetting);
-            }
+            p.Colorize(textBlock, record, (PinyinColorScheme)settings.PinyinColorSetting);
         }
 
         #endregion

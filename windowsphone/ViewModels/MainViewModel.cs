@@ -47,6 +47,7 @@ namespace kuaishuo2
 
                 this.Items.Add(new ItemViewModel()
                 {
+                    Record = r,
                     Pinyin = r.Chinese.Pinyin,
                     English = String.Join("; ", r.English),
                     EnglishWithNewlines = String.Join("\n", r.English),

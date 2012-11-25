@@ -14,20 +14,25 @@ using CC_CEDICT.WindowsPhone;
 
 namespace kuaishuo2
 {
-    public enum PinyinColorScheme { None = 0, Dummitt = 1 };
+    public enum PinyinColorScheme { None = 0, Dummitt = 1, Knibb = 2 };
 
-    public class PinyinColorOptions : List<PinyinColors>
+    public class PinyinColorOptions : List<PinyinColorPalette>
     {
         public static Color DodgerBlue = Color.FromArgb(0xFF, 0x1E, 0x90, 0xFF);
         public static Color LimeGreen = Color.FromArgb(0xFF, 0x32, 0xCD, 0x32);
 
         public PinyinColorOptions()
         {
-            Add(new PinyinColors(PinyinColorScheme.None, Colors.Black, Colors.Black, Colors.Black, Colors.Black, Colors.Black));
-            Add(new PinyinColors(PinyinColorScheme.Dummitt, Colors.Red, Colors.Orange, LimeGreen, DodgerBlue, Colors.Black));
+            // Add(...) PinyinColors in enumeration order
+            // PinyinColorScheme.None = 0
+            Add(new PinyinColorPalette(PinyinColorScheme.None, Colors.Black, Colors.Black, Colors.Black, Colors.Black, Colors.Black));
+            // PinyinColorScheme.Dummitt = 1
+            Add(new PinyinColorPalette(PinyinColorScheme.Dummitt, Colors.Red, Colors.Orange, LimeGreen, DodgerBlue, Colors.Black));
+            // PinyinColorScheme.Knibb = 2
+            Add(new PinyinColorPalette(PinyinColorScheme.Knibb, DodgerBlue, LimeGreen, Colors.Orange, Colors.Red, Colors.Black));
         }
 
-        public PinyinColors this[PinyinColorScheme scheme]
+        public PinyinColorPalette this[PinyinColorScheme scheme]
         {
             get
             {
@@ -37,17 +42,23 @@ namespace kuaishuo2
         }
     }
 
-    public class PinyinColors : List<Color>
+    public class PinyinColorPalette : List<Color>
     {
         public PinyinColorScheme Scheme;
 
-        public PinyinColors(PinyinColorScheme scheme, Color flat, Color rising, Color fallingRising, Color falling, Color neutral)
+        public PinyinColorPalette(PinyinColorScheme scheme, Color flat, Color rising, Color fallingRising, Color falling, Color neutral)
         {
             Scheme = scheme;
+            // Add(...) Colors in Pinyin.Tones enumeration order
+            // Pinyin.Tones.Neutral = 5 (in accessor mod 5 so this wraps to 0)
             Add(neutral);
+            // Pinyin.Tones.Flat = 1
             Add(flat);
+            // Pinyin.Tones.Rising = 2
             Add(rising);
+            // Pinyin.Tones.FallingRising = 3
             Add(fallingRising);
+            // Pinyin.Tones.Falling = 4
             Add(falling);
         }
 
