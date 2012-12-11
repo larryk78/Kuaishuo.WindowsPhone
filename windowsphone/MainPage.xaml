@@ -19,6 +19,7 @@
 
     <UserControl.Resources>
         <local:NotepadLookupConvertor x:Key="NotepadLookup"/>
+        <local:MinimumLengthConvertor x:Key="MinLengthChecker"/>
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -46,6 +47,8 @@
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=SearchPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>
                                         <c4f:RoundButton x:Name="CopyButton" ImageSource="/kuaishuo2;component/images/CopyButton.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="CopyButton_Click"/>
                                         <c4f:RoundButton x:Name="NotepadButton" ImageSource="/kuaishuo2;component/images/appbar.add.rest.png" Tag="{Binding Index}" IsEnabled="{Binding Index, Converter={StaticResource NotepadLookup}}" Margin="0,0,0,0" Click="NotepadButton_Click"/>
+                                        <c4f:RoundButton x:Name="SearchButton" ImageSource="/kuaishuo2;component/images/appbar.feature.search.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="SearchButton_Click"/>
+                                        <c4f:RoundButton x:Name="DecomposeButton" ImageSource="/kuaishuo2;component/images/Scissors.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="DecomposeButton_Click" IsEnabled="{Binding Chinese, Converter={StaticResource MinLengthChecker}}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -56,7 +59,7 @@
             <controls:PivotItem x:Name="NotepadPane" Header="notepad" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}">
                 <StackPanel x:Name="NotepadPaneContent" Margin="0,-12,-12,0" Orientation="Vertical" d:LayoutOverrides="Height">
                     <TextBlock x:Name="NotepadStatus" Text=" " TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" />
-                    <ListBox x:Name="NotepadItems" ItemsSource="{Binding Items}" Height="600" SelectionChanged="Results_SelectionChanged">
+                    <ListBox x:Name="NotepadItems" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="600" SelectionChanged="Results_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
@@ -74,6 +77,8 @@
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=NotepadPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>
                                         <c4f:RoundButton x:Name="CopyButton" ImageSource="/kuaishuo2;component/images/CopyButton.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="CopyButton_Click"/>
                                         <c4f:RoundButton x:Name="DeleteButton" ImageSource="/kuaishuo2;component/images/appbar.delete.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="DeleteButton_Click"/>
+                                        <c4f:RoundButton x:Name="SearchButton" ImageSource="/kuaishuo2;component/images/appbar.feature.search.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="SearchButton_Click"/>
+                                        <c4f:RoundButton x:Name="DecomposeButton" ImageSource="/kuaishuo2;component/images/Scissors.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="DecomposeButton_Click" IsEnabled="{Binding Chinese, Converter={StaticResource MinLengthChecker}}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
