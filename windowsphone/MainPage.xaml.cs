@@ -122,12 +122,18 @@ namespace kuaishuo2
         {
             if (e.Key != Key.Enter || !ok)
                 return;
-            
+
+            Query.Text = Query.Text.Trim();
             int minRelevance = Query.Text.Equals(lastQuery) ? 30 : 75;
-            List<DictionaryRecord> results = s.Search(Query.Text, minRelevance);
+            TriggerSearch(Query.Text, minRelevance);
+        }
+
+        void TriggerSearch(string query, int minRelevance)
+        {
+            List<DictionaryRecord> results = s.Search(query, minRelevance);
 
             if (results.Count == 0 && s.Total > 0) // try again
-                results = s.Search(Query.Text);
+                results = s.Search(query);
 
             // reset things that need to be reset :)
             prev[Results.Name] = -1; // override expansion marker
@@ -135,7 +141,7 @@ namespace kuaishuo2
 
             if (results.Count == 0)
             {
-                Status.Text = String.Format("No results for '{0}'. Try another search.", Query.Text.Trim());
+                Status.Text = String.Format("No results for '{0}'. Try another search.", query);
                 Status.Visibility = System.Windows.Visibility.Visible;
                 App.ViewModel.ClearData();
             }
@@ -146,8 +152,42 @@ namespace kuaishuo2
                 App.ViewModel.LoadData(results);
             }
 
-            lastQuery = Query.Text;
+            lastQuery = query;
             Results.Focus();
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            int i;
+            int.TryParse(button.Tag.ToString(), out i);
+            DictionaryRecord record = d[i];
+            Query.Text = record.Chinese.Simplified;
+            TriggerSearch(Query.Text, 30);
+            pivot.SelectedIndex = pivot.Items.IndexOf(SearchPane);
+        }
+
+        #endregion
+
+        #region Chinese decomposition
+
+        private void DecomposeButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            int i;
+            int.TryParse(button.Tag.ToString(), out i);
+            DictionaryRecord record = d[i];
+            List<DictionaryRecord> results = new List<DictionaryRecord>();
+            results.Add(record);
+            foreach (Chinese.Character c in record.Chinese.Characters)
+                results.AddRange(s.Search(c.Simplified.ToString(), 100));
+            Query.Text = record.Chinese.Simplified + " (split)";
+            prev[Results.Name] = -1; // override expansion marker
+            disabledNotepadButtons.Clear(); // empty list of buttons that don't exist any more :)
+            Status.Visibility = System.Windows.Visibility.Collapsed;
+            App.ViewModel.LoadData(results);
+            Results.ScrollIntoView(Results.Items[0]);
+            pivot.SelectedIndex = pivot.Items.IndexOf(SearchPane);
         }
 
         #endregion
@@ -211,7 +251,7 @@ namespace kuaishuo2
             }
 
             Results.SelectedIndex = -1; // reset
-            
+            Results.ScrollIntoView(Results.Items[item]);
         }
 
         //Brush old;

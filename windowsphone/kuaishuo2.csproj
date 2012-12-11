@@ -74,6 +74,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MinimumLengthConvertor.cs" />
     <Compile Include="NotepadLookupConvertor.cs" />
     <Compile Include="PinyinColorizer.cs" />
     <Compile Include="PinyinColors.cs" />
@@ -111,6 +112,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\appbar.feature.search.rest.png" />
+    <Resource Include="Images\Scissors.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
