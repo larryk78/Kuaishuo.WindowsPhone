@@ -301,16 +301,6 @@ namespace kuaishuo2
                 if (notes == null)
                     LoadNotes();
                 UpdateNotepadStatus();
-                if (notes.Items.Count != 0)
-                {
-                    emailButton.IsEnabled = true;
-                    ApplicationBar.Mode = ApplicationBarMode.Default;
-                }
-                else
-                {
-                    emailButton.IsEnabled = false;
-                    ApplicationBar.Mode = ApplicationBarMode.Minimized;
-                }
             }
             else
             {
@@ -336,6 +326,17 @@ namespace kuaishuo2
             notes = new MainViewModel();
             notes.LoadData(items);
             NotepadPane.DataContext = notes;
+            ApplicationBarIconButton emailButton = (ApplicationBarIconButton)ApplicationBar.Buttons[0];
+            if (notes.Items.Count != 0)
+            {
+                emailButton.IsEnabled = true;
+                ApplicationBar.Mode = ApplicationBarMode.Default;
+            }
+            else
+            {
+                emailButton.IsEnabled = false;
+                ApplicationBar.Mode = ApplicationBarMode.Minimized;
+            }
         }
 
         Dictionary<int, Button> disabledNotepadButtons = new Dictionary<int, Button>();
@@ -411,7 +412,7 @@ namespace kuaishuo2
             sb.AppendLine("CC-CEDICT ed. " + d.Header["date"]);
             sb.AppendLine();
             sb.AppendLine(s2.ToString());
-            sb.AppendLine("This extract redistributed under license: " + d.Header["license"]);
+            sb.AppendLine("This extract redistributed under license. " + d.Header["license"]);
 
             EmailComposeTask email = new EmailComposeTask();
             email.Subject = "[Kuaishuo] notepad";
