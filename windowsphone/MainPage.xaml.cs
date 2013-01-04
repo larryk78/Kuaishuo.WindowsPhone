@@ -140,7 +140,6 @@ namespace kuaishuo2
 
             // reset things that need to be reset :)
             prev[Results.Name] = -1; // override expansion marker
-            disabledNotepadButtons.Clear(); // empty list of buttons that don't exist any more :)
 
             if (results.Count == 0)
             {
@@ -186,7 +185,6 @@ namespace kuaishuo2
                 results.AddRange(s.Search(c.Simplified.ToString(), 100));
             Query.Text = record.Chinese.Simplified + " (split)";
             prev[Results.Name] = -1; // override expansion marker
-            disabledNotepadButtons.Clear(); // empty list of buttons that don't exist any more :)
             Status.Visibility = System.Windows.Visibility.Collapsed;
             App.ViewModel.LoadData(results);
             Results.ScrollIntoView(Results.Items[0]);
@@ -290,86 +288,43 @@ namespace kuaishuo2
 
         #endregion
 
-        #region notepad view (inc. add/remove items)
+        #region pivot switching
 
-        MainViewModel notes;
         void pivot_LoadingPivotItem(object sender, PivotItemEventArgs e)
         {
             ApplicationBarIconButton emailButton = (ApplicationBarIconButton)ApplicationBar.Buttons[0];
-            if (e.Item.Equals(NotepadPane))
-            {
-                if (notes == null)
-                    LoadNotes();
-                UpdateNotepadStatus();
-            }
-            else
+            if (e.Item.Equals(SearchPane))
             {
                 emailButton.IsEnabled = false;
                 ApplicationBar.Mode = ApplicationBarMode.Minimized;
             }
+            else if (e.Item.Equals(ListsPane))
+            {
+                ConvertNotepadToList(); // upgrade stored data from 0.8 to 0.9
+                LoadLists();
+            }
         }
 
-        void UpdateNotepadStatus()
-        {
-            NotepadStatus.Text = (notes.Items.Count == 0)
-                ? "\nThere are no entries in your notepad.\nSearch then use (+) button to add entries."
-                : "";
-        }
+        #endregion
 
-        void LoadNotes()
+        #region list handling
+
+        void ConvertNotepadToList()
         {
-            Settings settings = new Settings();
+            Settings s = new Settings();
+            if (s.NotepadItemsSetting.Count == 0) // done (or nothing to do)
+                return;
+            Debug.WriteLine("UPGRADE: Converting <=0.8 notepad data to >=0.9 list data.");
             List<DictionaryRecord> items = new List<DictionaryRecord>();
-            foreach (int id in settings.NotepadItemsSetting)
+            foreach (int id in s.NotepadItemsSetting)
                 items.Add(d[id]);
-            items.Reverse();
-            notes = new MainViewModel();
-            notes.LoadData(items);
-            NotepadPane.DataContext = notes;
-            ApplicationBarIconButton emailButton = (ApplicationBarIconButton)ApplicationBar.Buttons[0];
-            if (notes.Items.Count != 0)
-            {
-                emailButton.IsEnabled = true;
-                ApplicationBar.Mode = ApplicationBarMode.Default;
-            }
-            else
-            {
-                emailButton.IsEnabled = false;
-                ApplicationBar.Mode = ApplicationBarMode.Minimized;
-            }
+            ListManager.CreateList("notepad", items);
+            s.NotepadItemsSetting.Clear(); // empty old notepad
         }
 
-        Dictionary<int, Button> disabledNotepadButtons = new Dictionary<int, Button>();
-        void NotepadButton_Click(object sender, RoutedEventArgs e)
+        void LoadLists()
         {
-            Settings settings = new Settings();
-            List<int> items = settings.NotepadItemsSetting;
-            Button button = (Button)sender;
-            int i;
-            int.TryParse(button.Tag.ToString(), out i);
-            items.Add(i);
-            settings.NotepadItemsSetting = items;
-            LoadNotes();
-            prev[NotepadItems.Name] = -1; // override expansion marker
-            button.IsEnabled = false;
-            disabledNotepadButtons[i] = button;
-            pivot.SelectedIndex = pivot.Items.IndexOf(NotepadPane);
-        }
-
-        void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            Settings settings = new Settings();
-            List<int> items = settings.NotepadItemsSetting;
-            Button button = (Button)sender;
-            int i;
-            int.TryParse(button.Tag.ToString(), out i);
-            items.Remove(i);
-            settings.NotepadItemsSetting = items;
-            LoadNotes();
-            prev[NotepadItems.Name] = -1; // override expansion marker
-            if (disabledNotepadButtons.ContainsKey(i))
-                disabledNotepadButtons[i].IsEnabled = true;
-            UpdateNotepadStatus();
+            ListsPane.DataContext = new ListViewModel();
         }
 
         #endregion
@@ -395,6 +350,7 @@ namespace kuaishuo2
 
         private void EmailButton_Click(object sender, EventArgs e)
         {
+            /*
             StringBuilder sb = new StringBuilder();
             StringBuilder s2 = new StringBuilder();
 
@@ -418,6 +374,7 @@ namespace kuaishuo2
             email.Subject = "[Kuaishuo] notepad";
             email.Body = sb.ToString();
             email.Show();
+             */
         }
     }
 }

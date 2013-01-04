@@ -1,20 +1,19 @@
-﻿<phone:PhoneApplicationPage
-    x:Class="kuaishuo2.MainPage"
+﻿<phone:PhoneApplicationPage 
+    x:Class="kuaishuo2.List"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls"
     xmlns:local="clr-namespace:kuaishuo2"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
-    d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="Portrait" Orientation="Portrait"
+    SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
 
     <UserControl.Resources>
@@ -22,14 +21,12 @@
         <local:MinimumLengthConvertor x:Key="MinLengthChecker"/>
     </UserControl.Resources>
 
+    <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <controls:Pivot Title="KUAISHUO CHINESE DICTIONARY" x:Name="pivot" LoadingPivotItem="pivot_LoadingPivotItem">
-            <controls:PivotItem x:Name="SearchPane" Header="search" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}">
-                <StackPanel x:Name="SearchPaneContent" Margin="0,-12,-12,0" Orientation="Vertical" d:LayoutOverrides="Height">
-                    <TextBox x:Name="Query" InputScope="Search" GotFocus="Query_GotFocus" LostFocus="Query_LostFocus" KeyDown="Query_KeyDown" Text="english, pin1yin1 or 中文"/>
-                    <TextBlock x:Name="Status" Text=" " TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" />
-                    <ProgressBar x:Name="Progress" Visibility="Collapsed"/>
-                    <ListBox x:Name="Results" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="550" SelectionChanged="ListBox_SelectionChanged">
+        <controls:Pivot Title="KUAISHUO CHINESE DICTIONARY">
+            <controls:PivotItem x:Name="NotepadPane" Header="notepad" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}">
+                <StackPanel x:Name="NotepadPaneContent" Margin="0,0,-12,0" Orientation="Vertical" d:LayoutOverrides="Height">
+                    <ListBox x:Name="NotepadItems" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="600" SelectionChanged="ListBox_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
@@ -44,9 +41,9 @@
                                         <TextBlock Text="{Binding Chinese}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
                                     <StackPanel x:Name="ActionPanel" Margin="0,-10,0,10" Orientation="Horizontal" Visibility="Collapsed">
-                                        <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=SearchPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>
+                                        <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=NotepadPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>
                                         <c4f:RoundButton x:Name="CopyButton" ImageSource="/kuaishuo2;component/images/CopyButton.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="CopyButton_Click"/>
-                                        <c4f:RoundButton x:Name="NotepadButton" ImageSource="/kuaishuo2;component/images/appbar.add.rest.png" Tag="{Binding Index}" IsEnabled="{Binding Index, Converter={StaticResource NotepadLookup}}" Margin="0,0,0,0" Click="NotepadButton_Click"/>
+                                        <c4f:RoundButton x:Name="DeleteButton" ImageSource="/kuaishuo2;component/images/appbar.delete.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="DeleteButton_Click"/>
                                         <c4f:RoundButton x:Name="SearchButton" ImageSource="/kuaishuo2;component/images/appbar.feature.search.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="SearchButton_Click"/>
                                         <c4f:RoundButton x:Name="DecomposeButton" ImageSource="/kuaishuo2;component/images/Scissors.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="DecomposeButton_Click" IsEnabled="{Binding Chinese, Converter={StaticResource MinLengthChecker}}"/>
                                     </StackPanel>
@@ -56,30 +53,7 @@
                     </ListBox>
                 </StackPanel>
             </controls:PivotItem>
-            <controls:PivotItem x:Name="ListsPane" Header="lists" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/ListViewModelSampleData.xaml}">
-                <StackPanel x:Name="ListsPaneContent" Orientation="Vertical">
-                    <ListBox Margin="0,0,0,0" ItemsSource="{Binding Items}" Height="600" SelectionChanged="ListBox_SelectionChanged">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
-                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentColor}" Margin="13,0,9,0"/>
-                                    <StackPanel Width="330">
-                                        <TextBlock Text="{Binding LineOne}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,6,12,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                        <TextBlock Text="{Binding LineTwo}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </StackPanel>
-            </controls:PivotItem>
         </controls:Pivot>
     </Grid>
-
-    <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="False" Mode="Minimized" Opacity="0.5">
-            <shell:ApplicationBarIconButton IconUri="/images/feature.email.png" Text="Email" Click="EmailButton_Click"/>
-            <shell:ApplicationBarIconButton IconUri="/images/appbar.feature.settings.rest.png" Text="Settings" Click="SettingsButton_Click"/>
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>
+    
 </phone:PhoneApplicationPage>

@@ -1,0 +1,14 @@
+﻿<local:ListViewModel 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"       
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:kuaishuo2">
+
+    <local:ListViewModel.Items>
+        <local:ListItemViewModel LineOne="notepad" LineTwo="Maecenas praesent accumsan bibendum" LineThree="Maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur"/>
+        <local:ListItemViewModel LineOne="shopping list" LineTwo="Torquent ultrices vehicula volutpat" LineThree="Senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum dictumst eleifend"/>
+        <local:ListItemViewModel LineOne="HSK 1" LineTwo="Dictumst eleifend facilisi faucibus" LineThree="Pharetra placerat pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent"/>
+        <local:ListItemViewModel LineOne="HSK 2" LineTwo="Habitant inceptos interdum lobortis" LineThree="Accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur pharetra placerat"/>
+        <local:ListItemViewModel LineOne="HSK 3" LineTwo="Nascetur pharetra placerat pulvinar" LineThree="Pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum"/>
+    </local:ListViewModel.Items>
+
+</local:ListViewModel>
