@@ -46,7 +46,7 @@
                                     <StackPanel x:Name="ActionPanel" Margin="0,-10,0,10" Orientation="Horizontal" Visibility="Collapsed">
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=SearchPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>
                                         <c4f:RoundButton x:Name="CopyButton" ImageSource="/kuaishuo2;component/images/CopyButton.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="CopyButton_Click"/>
-                                        <c4f:RoundButton x:Name="NotepadButton" ImageSource="/kuaishuo2;component/images/appbar.add.rest.png" Tag="{Binding Index}" IsEnabled="{Binding Index, Converter={StaticResource NotepadLookup}}" Margin="0,0,0,0" Click="NotepadButton_Click"/>
+                                        <!--<c4f:RoundButton x:Name="NotepadButton" ImageSource="/kuaishuo2;component/images/appbar.add.rest.png" Tag="{Binding Index}" IsEnabled="{Binding Index, Converter={StaticResource NotepadLookup}}" Margin="0,0,0,0" Click="NotepadButton_Click"/>-->
                                         <c4f:RoundButton x:Name="SearchButton" ImageSource="/kuaishuo2;component/images/appbar.feature.search.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="SearchButton_Click"/>
                                         <c4f:RoundButton x:Name="DecomposeButton" ImageSource="/kuaishuo2;component/images/Scissors.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="DecomposeButton_Click" IsEnabled="{Binding Chinese, Converter={StaticResource MinLengthChecker}}"/>
                                     </StackPanel>
@@ -58,11 +58,11 @@
             </controls:PivotItem>
             <controls:PivotItem x:Name="ListsPane" Header="lists" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/ListViewModelSampleData.xaml}">
                 <StackPanel x:Name="ListsPaneContent" Orientation="Vertical">
-                    <ListBox Margin="0,0,0,0" ItemsSource="{Binding Items}" Height="600" SelectionChanged="ListBox_SelectionChanged">
+                    <ListBox Margin="0,0,0,0" ItemsSource="{Binding Items}" Height="600" SelectionChanged="ListListBox_SelectionChanged_OpenList">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
-                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentColor}" Margin="13,0,9,0"/>
+                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="13,0,9,0"/>
                                     <StackPanel Width="330">
                                         <TextBlock Text="{Binding LineOne}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,6,12,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding LineTwo}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
@@ -78,7 +78,6 @@
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="False" Mode="Minimized" Opacity="0.5">
-            <shell:ApplicationBarIconButton IconUri="/images/feature.email.png" Text="Email" Click="EmailButton_Click"/>
             <shell:ApplicationBarIconButton IconUri="/images/appbar.feature.settings.rest.png" Text="Settings" Click="SettingsButton_Click"/>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>

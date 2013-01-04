@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Text;
@@ -18,17 +19,18 @@ namespace kuaishuo2
 
                 if (fill != null)
                 {
-                    base.AddRange(fill);
+                    this.AddRange(fill);
                     Save();
                 }
                 else
                 {
-                    foreach (DictionaryRecord r in new Dictionary(Location))
-                        base.Add(r);
+                    Dictionary d = new Dictionary(Location);
+                    foreach (DictionaryRecord r in d)
+                        this.Add(r);
                 }
             }
 
-            string Location;
+            public string Location { get; private set; }
             public string Name
             {
                 get
@@ -37,32 +39,27 @@ namespace kuaishuo2
                 }
             }
 
-            public new void Add(DictionaryRecord item)
-            {
-                base.Add(item);
-                Save();
-            }
-
-            public new void Remove(DictionaryRecord item)
-            {
-                base.Remove(item);
-                Save();
-            }
-
             void Save()
             {
-                using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
+                try
                 {
-                    if (store.FileExists(Location))
-                        store.DeleteFile(Location);
-                    IsolatedStorageFileStream stream = store.CreateFile(Location);
-                    foreach (DictionaryRecord r in this)
+                    using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
                     {
-                        string line = String.Format("{0}\n", r.ToString());
-                        byte[] data = Encoding.UTF8.GetBytes(line.ToCharArray());
-                        stream.Write(data, 0, data.Length);
+                        if (store.FileExists(Location))
+                            store.DeleteFile(Location);
+                        IsolatedStorageFileStream stream = store.CreateFile(Location);
+                        foreach (DictionaryRecord r in this)
+                        {
+                            string line = String.Format("{0}\n", r.ToString());
+                            byte[] data = Encoding.UTF8.GetBytes(line.ToCharArray());
+                            stream.Write(data, 0, data.Length);
+                        }
+                        stream.Close();
                     }
-                    stream.Close();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Failed to Save() List: {0}", ex.Message);
                 }
             }
         }
@@ -77,6 +74,11 @@ namespace kuaishuo2
             return new List(String.Format("{0}/{1}.list", ListsDirectory, name), content);
         }
 
+        public static List GetListByName(string name)
+        {
+            return new List(String.Format("{0}/{1}.list", ListsDirectory, name));
+        }
+
         List<List> _Lists;
         public List<List> Lists
         {
@@ -87,10 +89,15 @@ namespace kuaishuo2
                 {
                     using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
                         foreach (string file in store.GetFileNames(String.Format("{0}/*.list", ListsDirectory)))
-                            _Lists.Add(new List(String.Format("{0}/{1}", ListsDirectory, file)));
+                        {
+                            List temp = new List(String.Format("{0}/{1}", ListsDirectory, file));
+                            _Lists.Add(temp);
+                            Debug.WriteLine("_Lists now contains {0} items", _Lists.Count);
+                        }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Debug.WriteLine("Problem loading Lists: {0}", ex.Message);
                 }
                 return _Lists;
             }

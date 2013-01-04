@@ -292,11 +292,11 @@ namespace kuaishuo2
 
         void pivot_LoadingPivotItem(object sender, PivotItemEventArgs e)
         {
-            ApplicationBarIconButton emailButton = (ApplicationBarIconButton)ApplicationBar.Buttons[0];
+            //ApplicationBarIconButton emailButton = (ApplicationBarIconButton)ApplicationBar.Buttons[0];
             if (e.Item.Equals(SearchPane))
             {
-                emailButton.IsEnabled = false;
-                ApplicationBar.Mode = ApplicationBarMode.Minimized;
+                //emailButton.IsEnabled = false;
+                //ApplicationBar.Mode = ApplicationBarMode.Minimized;
             }
             else if (e.Item.Equals(ListsPane))
             {
@@ -309,9 +309,16 @@ namespace kuaishuo2
 
         #region list handling
 
+        bool once = false;
         void ConvertNotepadToList()
         {
             Settings s = new Settings();
+            if (!once) // simulate a pre-existing notepad
+            {
+                s.NotepadItemsSetting.Add(8734);
+                s.NotepadItemsSetting.Add(1234);
+                once = true;
+            }
             if (s.NotepadItemsSetting.Count == 0) // done (or nothing to do)
                 return;
             Debug.WriteLine("UPGRADE: Converting <=0.8 notepad data to >=0.9 list data.");
@@ -325,6 +332,18 @@ namespace kuaishuo2
         void LoadLists()
         {
             ListsPane.DataContext = new ListViewModel();
+        }
+
+        private void ListListBox_SelectionChanged_OpenList(object sender, SelectionChangedEventArgs e)
+        {
+            ListBox list = (ListBox)sender;
+            int item = list.SelectedIndex;
+            if (item == -1)
+                return;
+            list.SelectedIndex = -1; // reset
+            ListItemViewModel ivm = (ListItemViewModel)list.Items[item];
+            string uri = String.Format("/ListPage.xaml?name={0}", ivm.LineOne);
+            NavigationService.Navigate(new Uri(uri, UriKind.Relative));
         }
 
         #endregion
@@ -346,35 +365,6 @@ namespace kuaishuo2
         private void SettingsButton_Click(object sender, EventArgs e)
         {
             NavigationService.Navigate(new Uri("/SettingsPage.xaml", UriKind.Relative));
-        }
-
-        private void EmailButton_Click(object sender, EventArgs e)
-        {
-            /*
-            StringBuilder sb = new StringBuilder();
-            StringBuilder s2 = new StringBuilder();
-
-            foreach (ItemViewModel item in NotepadItems.Items)
-            {
-                sb.AppendLine(item.Pinyin);
-                sb.AppendLine(item.EnglishWithNewlines);
-                sb.AppendLine(item.Chinese);
-                sb.AppendLine();
-                s2.AppendLine(item.Record.ToString());
-            }
-
-            sb.AppendLine("-- Kuaishuo Chinese Dictionary http://www.knibb.co.uk/kuaishuo");
-            sb.AppendLine("________________________________________");
-            sb.AppendLine("CC-CEDICT ed. " + d.Header["date"]);
-            sb.AppendLine();
-            sb.AppendLine(s2.ToString());
-            sb.AppendLine("This extract redistributed under license. " + d.Header["license"]);
-
-            EmailComposeTask email = new EmailComposeTask();
-            email.Subject = "[Kuaishuo] notepad";
-            email.Body = sb.ToString();
-            email.Show();
-             */
         }
     }
 }

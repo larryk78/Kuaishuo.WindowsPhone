@@ -23,7 +23,8 @@ namespace kuaishuo2
             {
                 Items.Add(new ListItemViewModel {
                     LineOne = list.Name,
-                    LineTwo = String.Format("{0} entr{1}", list.Count, (list.Count == 1 ? "y" : "ies")) });
+                    LineTwo = String.Format("{0} entr{1}", list.Count, (list.Count == 1 ? "y" : "ies"))
+                });
             }
         }
 
