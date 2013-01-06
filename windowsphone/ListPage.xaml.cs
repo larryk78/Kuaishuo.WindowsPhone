@@ -24,11 +24,12 @@ namespace kuaishuo2
         }
 
         Dictionary d;
-        ListManager.List list;
+        DictionaryRecordList list;
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            list = ListManager.GetListByName(NavigationContext.QueryString["name"]);
+            App app = (App)Application.Current;
+            list = app.ListManager[NavigationContext.QueryString["name"]];
             MainViewModel mvm = new MainViewModel();
             mvm.LoadData(list);
             this.DataContext = mvm;

@@ -35,6 +35,17 @@ namespace kuaishuo2
             }
         }
 
+        ListManager2 _ListManager;
+        public ListManager2 ListManager
+        {
+            get
+            {
+                if (_ListManager == null)
+                    _ListManager = new ListManager2();
+                return _ListManager;
+            }
+        }
+
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
         /// </summary>

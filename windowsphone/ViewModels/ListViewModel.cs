@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Windows;
 
 namespace kuaishuo2
 {
@@ -18,9 +19,15 @@ namespace kuaishuo2
         public void LoadData()
         {
             this.Items.Clear();
-            ListManager listmanager = new ListManager();
-            foreach (ListManager.List list in listmanager.Lists)
+            App app = (App)Application.Current;
+            List<string> lists = new List<string>();
+            foreach (string key in app.ListManager.Keys)
+                lists.Add(key);
+            lists.Sort();
+            foreach (string name in lists)
             {
+                DictionaryRecordList list = app.ListManager[name];
+                list.Slurp();
                 Items.Add(new ListItemViewModel {
                     LineOne = list.Name,
                     LineTwo = String.Format("{0} entr{1}", list.Count, (list.Count == 1 ? "y" : "ies"))

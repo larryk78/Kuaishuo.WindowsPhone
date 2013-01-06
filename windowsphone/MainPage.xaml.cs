@@ -322,10 +322,10 @@ namespace kuaishuo2
             if (s.NotepadItemsSetting.Count == 0) // done (or nothing to do)
                 return;
             Debug.WriteLine("UPGRADE: Converting <=0.8 notepad data to >=0.9 list data.");
-            List<DictionaryRecord> items = new List<DictionaryRecord>();
+            App app = (App)Application.Current;
             foreach (int id in s.NotepadItemsSetting)
-                items.Add(d[id]);
-            ListManager.CreateList("notepad", items);
+                app.ListManager["notepad"].Add(d[id]);
+            app.ListManager["notepad"].Save();
             s.NotepadItemsSetting.Clear(); // empty old notepad
         }
 
