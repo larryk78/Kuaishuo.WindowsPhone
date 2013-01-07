@@ -9,7 +9,7 @@ namespace kuaishuo2
     public class ListItemViewModel : INotifyPropertyChanged
     {
         private string _line1;
-        public string LineOne
+        public string Name
         {
             get
             {
@@ -20,7 +20,7 @@ namespace kuaishuo2
                 if (value != _line1)
                 {
                     _line1 = value;
-                    NotifyPropertyChanged("LineOne");
+                    NotifyPropertyChanged("Name");
                 }
             }
         }
@@ -55,6 +55,23 @@ namespace kuaishuo2
                 {
                     _line3 = value;
                     NotifyPropertyChanged("LineThree");
+                }
+            }
+        }
+
+        private bool _isEditable = false;
+        public bool IsEditable
+        {
+            get
+            {
+                return _isEditable;
+            }
+            set
+            {
+                if (value != _isEditable)
+                {
+                    _isEditable = value;
+                    NotifyPropertyChanged("IsEditable");
                 }
             }
         }

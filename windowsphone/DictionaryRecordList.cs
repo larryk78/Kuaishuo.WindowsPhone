@@ -65,6 +65,31 @@ namespace kuaishuo2
             }
         }
 
+        const string ReadOnlyHeaderKey = "readonly";
+        bool ReadOnlyHeaderProcessed = false;
+        bool _ReadOnly = false;
+        public bool ReadOnly
+        {
+            get
+            {
+                if (!ReadOnlyHeaderProcessed)
+                {
+                    if (this.Dictionary != null && this.Dictionary.Header.ContainsKey(ReadOnlyHeaderKey))
+                    {
+                        try
+                        {
+                            _ReadOnly = bool.Parse(this.Dictionary.Header[ReadOnlyHeaderKey]);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    ReadOnlyHeaderProcessed = true; // whether it worked or not
+                }
+                return _ReadOnly;
+            }
+        }
+
         public new int Count
         {
             get
@@ -126,8 +151,9 @@ namespace kuaishuo2
                     IsolatedStorageFileStream stream = store.CreateFile(SavePath);
 
                     // write the name of this list as a header
-                    byte[] header = Encoding.UTF8.GetBytes(String.Format("#! {0}={1}\n", NameHeaderKey, this.Name));
-                    stream.Write(header, 0, header.Length);
+                    string header = String.Format("#! {0}={1}\n#! {2}={3}\n", NameHeaderKey, this.Name, ReadOnlyHeaderKey, this.ReadOnly);
+                    byte[] headerdata = Encoding.UTF8.GetBytes(header);
+                    stream.Write(headerdata, 0, headerdata.Length);
 
                     // write the content of this list as dictionary records
                     foreach (DictionaryRecord record in this)
@@ -138,13 +164,13 @@ namespace kuaishuo2
                     
                     stream.Close();
                 }
+                
+                SaveRequired = false;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Failed to Save() List: {0}", ex.Message);
             }
-
-            SaveRequired = false;
         }
     }
 }

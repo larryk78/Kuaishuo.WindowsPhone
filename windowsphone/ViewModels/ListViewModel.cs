@@ -13,7 +13,6 @@ namespace kuaishuo2
         public ListViewModel()
         {
             this.Items = new ObservableCollection<ListItemViewModel>();
-            LoadData();
         }
 
         public void LoadData()
@@ -29,7 +28,7 @@ namespace kuaishuo2
                 DictionaryRecordList list = app.ListManager[name];
                 list.Slurp();
                 Items.Add(new ListItemViewModel {
-                    LineOne = list.Name,
+                    Name = list.Name,
                     LineTwo = String.Format("{0} entr{1}", list.Count, (list.Count == 1 ? "y" : "ies"))
                 });
             }

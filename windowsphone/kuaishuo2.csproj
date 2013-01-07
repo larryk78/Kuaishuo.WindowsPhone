@@ -102,6 +102,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="VisibilityConverter.cs" />
     <Compile Include="VisualTreeHelperHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +134,7 @@
     <Resource Include="Images\appbar.feature.search.rest.png" />
     <Resource Include="Images\Scissors.png" />
     <Content Include="Images\feature.email.png" />
+    <Content Include="lists\0.list" />
     <None Include="Service References\BingTranslator\kuaishuo2.BingTranslator.GetTranslationsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -154,8 +156,8 @@
     </None>
     <None Include="Service References\BingTranslator\SoapService.wsdl" />
     <Resource Include="Images\CopyButton.png" />
-    <Resource Include="Images\appbar.add.rest.png" />
-    <Resource Include="Images\appbar.delete.rest.png" />
+    <Content Include="Images\appbar.add.rest.png" />
+    <Content Include="Images\appbar.delete.rest.png" />
     <Content Include="Images\appbar.feature.settings.rest.png" />
     <Resource Include="Images\appbar.questionmark.rest.png" />
     <Resource Include="Images\appbar.transport.play.rest.png" />

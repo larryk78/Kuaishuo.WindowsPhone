@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -7,6 +8,7 @@ using System.IO.IsolatedStorage;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -171,6 +173,26 @@ namespace kuaishuo2
 
         #endregion
 
+        #region pivot switching
+
+        private void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (((Pivot)sender).SelectedIndex)
+            {
+                case 0: // search page
+                    ApplicationBar = ((ApplicationBar)Resources["AppBar_SearchPivotPage"]);
+                    break;
+                case 1: // lists page
+                    ApplicationBar = ((ApplicationBar)Resources["AppBar_ListsPivotPage"]);
+                    ConvertNotepadToList(); // upgrade stored data from 0.8 to 0.9
+                    LoadLists();
+                    break;
+            }
+            ApplicationBar.IsVisible = true;
+        }
+
+        #endregion
+
         #region Chinese decomposition
 
         private void DecomposeButton_Click(object sender, RoutedEventArgs e)
@@ -288,25 +310,6 @@ namespace kuaishuo2
 
         #endregion
 
-        #region pivot switching
-
-        void pivot_LoadingPivotItem(object sender, PivotItemEventArgs e)
-        {
-            //ApplicationBarIconButton emailButton = (ApplicationBarIconButton)ApplicationBar.Buttons[0];
-            if (e.Item.Equals(SearchPane))
-            {
-                //emailButton.IsEnabled = false;
-                //ApplicationBar.Mode = ApplicationBarMode.Minimized;
-            }
-            else if (e.Item.Equals(ListsPane))
-            {
-                ConvertNotepadToList(); // upgrade stored data from 0.8 to 0.9
-                LoadLists();
-            }
-        }
-
-        #endregion
-
         #region list handling
 
         bool once = false;
@@ -331,7 +334,53 @@ namespace kuaishuo2
 
         void LoadLists()
         {
-            ListsPane.DataContext = new ListViewModel();
+            ListViewModel lvm = new ListViewModel();
+            lvm.LoadData();
+            ListsPane.DataContext = lvm;
+        }
+
+        private void NewList_Click(object sender, EventArgs e)
+        {
+            ListViewModel lvm = (ListViewModel)ListsPane.DataContext;
+            ListItemViewModel item = new ListItemViewModel { Name = "", LineTwo = "Enter a name and hit return.", IsEditable = true };
+            lvm.Items.Insert(0, item);
+        }
+
+        void NewList_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            if (textBox.Visibility == System.Windows.Visibility.Collapsed)
+                return;
+            textBox.Focus();
+        }
+
+        private void NewList_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ApplicationBar.IsVisible = false;
+        }
+
+        private void NewList_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ApplicationBar.IsVisible = true;
+        }
+
+        private void NewList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+            TextBox textBox = (TextBox)sender;
+            App app = (App)Application.Current;
+            if (app.ListManager.ContainsKey(textBox.Text))
+            {
+                MessageBox.Show(String.Format("There is already a list called '{0}'. Enter a unique name.", textBox.Text));
+                return;
+            }
+            app.ListManager[textBox.Text].Save();
+            LoadLists();
+        }
+
+        private void DeleteList_Click(object sender, EventArgs e)
+        {
         }
 
         private void ListListBox_SelectionChanged_OpenList(object sender, SelectionChangedEventArgs e)
@@ -342,7 +391,7 @@ namespace kuaishuo2
                 return;
             list.SelectedIndex = -1; // reset
             ListItemViewModel ivm = (ListItemViewModel)list.Items[item];
-            string uri = String.Format("/ListPage.xaml?name={0}", ivm.LineOne);
+            string uri = String.Format("/ListPage.xaml?name={0}", ivm.Name);
             NavigationService.Navigate(new Uri(uri, UriKind.Relative));
         }
 
@@ -362,7 +411,7 @@ namespace kuaishuo2
 
         #endregion
 
-        private void SettingsButton_Click(object sender, EventArgs e)
+        private void Settings_Click(object sender, EventArgs e)
         {
             NavigationService.Navigate(new Uri("/SettingsPage.xaml", UriKind.Relative));
         }
