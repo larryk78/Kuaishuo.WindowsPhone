@@ -79,7 +79,8 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
-                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="15,0,9,0"/>
+                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="15,0,9,0" Visibility="{Binding IsEditable, Converter={StaticResource InvertedVisibility}}"/>
+                                    <Border Height="100" Width="100" BorderBrush="{StaticResource PhoneAccentBrush}" BorderThickness="5" Margin="15,0,9,0" Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}"/>
                                     <StackPanel Width="330">
                                         <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource InvertedVisibility}}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,6,12,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBox x:Name="NewList_Name" InputScope="Text" Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}" Loaded="NewList_Loaded" GotFocus="NewList_GotFocus" LostFocus="NewList_LostFocus" KeyDown="NewList_KeyDown"/>
