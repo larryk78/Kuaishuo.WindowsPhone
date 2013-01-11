@@ -26,11 +26,41 @@ namespace kuaishuo2
             foreach (string name in lists)
             {
                 DictionaryRecordList list = app.ListManager[name];
-                list.Slurp();
-                Items.Add(new ListItemViewModel {
-                    Name = list.Name,
-                    LineTwo = String.Format("{0} entr{1}", list.Count, (list.Count == 1 ? "y" : "ies"))
-                });
+                string lineTwo;
+                if (list.IsDeleted)
+                    lineTwo = "To be deleted on exit. Open to undo.";
+                else
+                    lineTwo = String.Format("{0} entr{1}", list.Count, (list.Count == 1 ? "y" : "ies"));
+                Items.Add(new ListItemViewModel { Name = list.Name, LineTwo = lineTwo });
+            }
+        }
+
+        private bool _EditInProgress = false;
+        public bool EditInProgress
+        {
+            get
+            {
+                return _EditInProgress;
+            }
+            set
+            {
+                if (value != _EditInProgress)
+                {
+                    _EditInProgress = value;
+                    NotifyPropertyChanged("EditInProgress");
+                    NotifyPropertyChanged("NotEditing");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Inverse of EditInProgress for XAML binding.
+        /// </summary>
+        public bool NotEditing
+        {
+            get
+            {
+                return !EditInProgress;
             }
         }
 

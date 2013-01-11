@@ -88,6 +88,7 @@ namespace kuaishuo2
             }
         }
 
+        // not shown in settings page...
         const string NotepadItemsSettingKeyName = "NotepadItemsSetting";
         List<int> NotepadItemsSettingDefault = new List<int>();
         public List<int> NotepadItemsSetting
@@ -99,6 +100,26 @@ namespace kuaishuo2
             set
             {
                 if (AddOrUpdateValue(NotepadItemsSettingKeyName, value))
+                    Save();
+            }
+        }
+
+        // not shown in settings page...
+        const string NotepadCreatedSettingKeyName = "NotepadCreatedSetting";
+        const bool NotepadCreatedSettingDefault = false;
+
+        /// <summary>
+        /// Indicates whether the default ("notepad") list has been created for the user.
+        /// </summary>
+        public bool NotepadCreatedSetting
+        {
+            get
+            {
+                return GetValueOrDefault<bool>(NotepadCreatedSettingKeyName, NotepadCreatedSettingDefault);
+            }
+            set
+            {
+                if (AddOrUpdateValue(NotepadCreatedSettingKeyName, value))
                     Save();
             }
         }

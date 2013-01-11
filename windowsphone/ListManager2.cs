@@ -9,22 +9,85 @@ using CC_CEDICT.WindowsPhone;
 
 namespace kuaishuo2
 {
-    public class ListManager2 : Dictionary<string, DictionaryRecordList>, IDisposable
+    public class ListManager2 : Dictionary<string, DictionaryRecordList>
     {
-        public ListManager2()
+        /// <summary>
+        /// Wraps a DictionaryRecordList to add management functionality.
+        /// </summary>
+        class ManagedList : DictionaryRecordList
         {
-            this.Reload();
+            public string SavePath;
+            int _Identifier = -1;
+
+            public ManagedList(Dictionary dictionary)
+                : base(dictionary)
+            {
+            }
+
+            public ManagedList(string name)
+                : base(name)
+            {
+            }
+
+            /// <summary>
+            /// The numeric part of the filename of this list.
+            /// </summary>
+            public int Identifier
+            {
+                get
+                {
+                    if (_Identifier < 0)
+                        _Identifier = int.Parse(Path.GetFileNameWithoutExtension(this.SavePath));
+                    return _Identifier;
+                }
+            }
+
+            public void Save()
+            {
+                try
+                {
+                    if (!IsModified) // save not required
+                        return;
+
+                    using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
+                    {
+                        if (store.FileExists(SavePath))
+                            store.DeleteFile(SavePath);
+
+                        IsolatedStorageFileStream stream = store.CreateFile(SavePath);
+                        byte[] data = Encoding.UTF8.GetBytes(this.ToString());
+                        stream.Write(data, 0, data.Length);
+                        stream.Close();
+                    }
+
+                    IsModified = false;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Couldn't save list: {0}", ex.Message);
+                }
+            }
+
+            public void Delete()
+            {
+                try
+                {
+                    if (!IsDeleted)
+                        return;
+
+                    using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
+                        store.DeleteFile(SavePath);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Couldn't delete list: {0}", ex.Message);
+                }
+            }
         }
 
-        /// <summary>
-        /// Contains the file numbers of the *.list files, indexed by name.
-        /// </summary>
-        Dictionary<string, int> ListNumberLookup = new Dictionary<string, int>();
-
-        public void Reload()
+        int MaxListIdentifier = -1;
+        public ListManager2()
         {
-            this.Clear();
-
             try
             {
                 using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
@@ -32,47 +95,68 @@ namespace kuaishuo2
                     foreach (string file in store.GetFileNames(String.Format("{0}/*.list", ListsDirectory)))
                     {
                         string path = String.Format("{0}/{1}", ListsDirectory, file);
+                        Debug.WriteLine("Loading list: {0}", path);
                         Dictionary dictionary = new Dictionary(path);
-                        DictionaryRecordList list = new DictionaryRecordList(dictionary);
+                        ManagedList list = new ManagedList(dictionary);
                         list.SavePath = path;
-                        this.Add(list.Name, list);
-                        ListNumberLookup.Add(list.Name, int.Parse(Path.GetFileNameWithoutExtension(path)));
+                        base.Add(list.Name, list);
+                        if (list.Identifier > MaxListIdentifier)
+                            MaxListIdentifier = list.Identifier;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Problem loading lists: {0}", ex.Message);
+                Debug.WriteLine("Couldn't load lists: {0}", ex.Message);
             }
         }
 
+        /// <summary>
+        /// DictionaryRecordList accessor and auto-creator.
+        /// </summary>
+        /// <param name="name">Name of the list to retrieve or create.</param>
+        /// <returns>The existing or newly-created DictionaryRecordList.</returns>
         public new DictionaryRecordList this[string name]
         {
             get
             {
-                if (!this.ContainsKey(name))
+                if (!this.ContainsKey(name)) // auto-create list
                 {
-                    DictionaryRecordList list = new DictionaryRecordList(name);
-                    this.Add(name, list);
-                    int x = -1;
-                    foreach (int n in ListNumberLookup.Values)
-                        if (n > x)
-                            x = n;
-                    ListNumberLookup.Add(name, ++x);
-                    list.SavePath = ListFilePath(name);
+                    ManagedList list = new ManagedList(name);
+                    list.SavePath = String.Format("{0}/{1}.list", ListsDirectory, ++MaxListIdentifier);
+                    base.Add(name, list);
                 }
                 return base[name];
             }
         }
 
-        public string ListFilePath(string name)
+        private new void Add(string key, DictionaryRecordList value)
         {
-            return String.Format("{0}/{1}.list", ListsDirectory, ListNumberLookup[name]);
+            throw new NotSupportedException("ListManager2.Add(...) is not supported. Use ListManager2[string key] instead.");
         }
 
-        static bool DirectoryExists = false;
+        /// <summary>
+        /// Mark a list for deletion.
+        /// </summary>
+        /// <param name="key">Name of the list to mark as deleted</param>
+        public new void Remove(string key)
+        {
+            this[key].IsDeleted = true;
+        }
+
+        /// <summary>
+        /// Rename a list from a to b.
+        /// </summary>
+        public void Rename(string a, string b)
+        {
+            base.Add(b, this[a]);
+            this[b].Name = b;
+            base.Remove(a);
+        }
+
         const string _ListsDirectory = "lists";
-        static string ListsDirectory
+        bool DirectoryExists = false;
+        string ListsDirectory
         {
             get
             {
@@ -87,14 +171,15 @@ namespace kuaishuo2
             }
         }
 
-        bool Disposed = false;
-        public void Dispose()
+        ~ListManager2()
         {
-            if (Disposed) // already disposed
-                return;
-            foreach (DictionaryRecordList list in this.Values)
-                list.Save();
-            Disposed = true;
+            foreach (ManagedList list in this.Values)
+            {
+                if (list.IsDeleted)
+                    list.Delete();
+                else if (list.IsModified)
+                    list.Save();
+            }
         }
     }
 }

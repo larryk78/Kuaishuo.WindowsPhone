@@ -30,6 +30,7 @@ namespace kuaishuo2
         {
             App app = (App)Application.Current;
             list = app.ListManager[NavigationContext.QueryString["name"]];
+            NotepadPane.Header = list.Name;
             MainViewModel mvm = new MainViewModel();
             mvm.LoadData(list);
             this.DataContext = mvm;

@@ -177,6 +177,9 @@ namespace kuaishuo2
 
         private void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!ok)
+                return;
+
             switch (((Pivot)sender).SelectedIndex)
             {
                 case 0: // search page
@@ -184,7 +187,7 @@ namespace kuaishuo2
                     break;
                 case 1: // lists page
                     ApplicationBar = ((ApplicationBar)Resources["AppBar_ListsPivotPage"]);
-                    ConvertNotepadToList(); // upgrade stored data from 0.8 to 0.9
+                    CreateDefaultList();
                     LoadLists();
                     break;
             }
@@ -312,23 +315,27 @@ namespace kuaishuo2
 
         #region list handling
 
-        bool once = false;
-        void ConvertNotepadToList()
+        string DefaultListName = "notepad";
+
+        /// <summary>
+        /// Create default "notepad" list (once).
+        /// </summary>
+        void CreateDefaultList()
         {
             Settings s = new Settings();
-            if (!once) // simulate a pre-existing notepad
-            {
-                s.NotepadItemsSetting.Add(8734);
-                s.NotepadItemsSetting.Add(1234);
-                once = true;
-            }
-            if (s.NotepadItemsSetting.Count == 0) // done (or nothing to do)
+            if (s.NotepadCreatedSetting)
                 return;
-            Debug.WriteLine("UPGRADE: Converting <=0.8 notepad data to >=0.9 list data.");
+
             App app = (App)Application.Current;
+            DictionaryRecordList list = app.ListManager[DefaultListName];
+            s.NotepadCreatedSetting = true;
+            
+            if (s.NotepadItemsSetting.Count == 0) // no (old) notepad items to migrate
+                return;
+
             foreach (int id in s.NotepadItemsSetting)
-                app.ListManager["notepad"].Add(d[id]);
-            app.ListManager["notepad"].Save();
+                list.Add(d[id]);
+
             s.NotepadItemsSetting.Clear(); // empty old notepad
         }
 
@@ -337,16 +344,46 @@ namespace kuaishuo2
             ListViewModel lvm = new ListViewModel();
             lvm.LoadData();
             ListsPane.DataContext = lvm;
+            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // enable add new list
+            ApplicationBar.IsVisible = true;
         }
 
         private void NewList_Click(object sender, EventArgs e)
         {
             ListViewModel lvm = (ListViewModel)ListsPane.DataContext;
+            lvm.EditInProgress = true;
             ListItemViewModel item = new ListItemViewModel { Name = "", LineTwo = "Enter a name and hit return.", IsEditable = true };
             lvm.Items.Insert(0, item);
+            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = false; // disable "multi-add"
         }
 
-        void NewList_Loaded(object sender, RoutedEventArgs e)
+        bool RenameListMode = false;
+        string OldName;
+        private void RenameList_Click(object sender, EventArgs e)
+        {
+            ListViewModel lvm = (ListViewModel)ListsPane.DataContext;
+            lvm.EditInProgress = true;
+            MenuItem menuItem = (MenuItem)sender;
+            ListBoxItem lbItem = (ListBoxItem)ListListBox.ItemContainerGenerator.ContainerFromItem(menuItem.DataContext);
+            ListItemViewModel listItem = (ListItemViewModel)lbItem.DataContext;
+            OldName = listItem.Name;
+            RenameListMode = true; // turn on editing mode
+            listItem.IsEditable = true;
+            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = false; // disable add during rename
+        }
+
+        private void DeleteList_Click(object sender, EventArgs e)
+        {
+            MenuItem menuItem = (MenuItem)sender;
+            ListBoxItem lbItem = (ListBoxItem)ListListBox.ItemContainerGenerator.ContainerFromItem(menuItem.DataContext);
+            ListItemViewModel listItem = (ListItemViewModel)lbItem.DataContext;
+            App app = (App)Application.Current;
+            app.ListManager.Remove(listItem.Name);
+            LoadLists();
+        }
+
+        //void ListEdit_Loaded(object sender, RoutedEventArgs e)
+        void ListEdit_VisibilityChanged(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
             if (textBox.Visibility == System.Windows.Visibility.Collapsed)
@@ -354,33 +391,59 @@ namespace kuaishuo2
             textBox.Focus();
         }
 
-        private void NewList_GotFocus(object sender, RoutedEventArgs e)
+        private void ListEdit_GotFocus(object sender, RoutedEventArgs e)
         {
             ApplicationBar.IsVisible = false;
         }
 
-        private void NewList_LostFocus(object sender, RoutedEventArgs e)
+        // LostFocus means "cancel"
+        private void ListEdit_LostFocus(object sender, RoutedEventArgs e)
         {
+            ListViewModel lvm = (ListViewModel)ListListBox.DataContext;
+            if (RenameListMode) // user was editing an existing list
+            {
+                TextBox textBox = (TextBox)sender;
+                textBox.Text = OldName; // reset
+                foreach (ListItemViewModel item in lvm.Items)
+                    item.IsEditable = false;
+            }
+            else // user was creating a new list
+            {
+                LoadLists(); // to wipe out new/blank one
+            }
+            RenameListMode = false; // turn off renaming mode
+            lvm.EditInProgress = false; // to reenable context menu
             ApplicationBar.IsVisible = true;
+            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // re-enable add list
         }
 
-        private void NewList_KeyDown(object sender, KeyEventArgs e)
+        private void ListEdit_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter)
                 return;
             TextBox textBox = (TextBox)sender;
-            App app = (App)Application.Current;
-            if (app.ListManager.ContainsKey(textBox.Text))
+            string name = textBox.Text.Trim();
+            if (name.Length == 0)
             {
-                MessageBox.Show(String.Format("There is already a list called '{0}'. Enter a unique name.", textBox.Text));
+                MessageBox.Show("Name cannot be blank.");
                 return;
             }
-            app.ListManager[textBox.Text].Save();
+            App app = (App)Application.Current;
+            if (name != OldName && app.ListManager.ContainsKey(name))
+            {
+                MessageBox.Show(String.Format("There is already a list called '{0}'. Choose a unique name.", name));
+                return;
+            }
+            if (RenameListMode)
+            {
+                if (name != OldName)
+                    app.ListManager.Rename(OldName, name);
+            }
+            else // create a new list
+            {
+                DictionaryRecordList list = app.ListManager[name];
+            }
             LoadLists();
-        }
-
-        private void DeleteList_Click(object sender, EventArgs e)
-        {
         }
 
         private void ListListBox_SelectionChanged_OpenList(object sender, SelectionChangedEventArgs e)
@@ -390,7 +453,16 @@ namespace kuaishuo2
             if (item == -1)
                 return;
             list.SelectedIndex = -1; // reset
+
+            ListViewModel lvm = (ListViewModel)ListsPane.DataContext;
+            if (lvm.EditInProgress) // don't open lists while adding/renaming
+                return;
+
             ListItemViewModel ivm = (ListItemViewModel)list.Items[item];
+            App app = (App)Application.Current;
+            app.ListManager[ivm.Name].IsDeleted = false; // opening restores a deleted list
+            LoadLists();
+
             string uri = String.Format("/ListPage.xaml?name={0}", ivm.Name);
             NavigationService.Navigate(new Uri(uri, UriKind.Relative));
         }

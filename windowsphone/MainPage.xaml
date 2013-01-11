@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls"
     xmlns:local="clr-namespace:kuaishuo2"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
@@ -20,9 +21,8 @@
     <UserControl.Resources>
         <local:NotepadLookupConvertor x:Key="NotepadLookup"/>
         <local:MinimumLengthConvertor x:Key="MinLengthChecker"/>
-        <local:VisibilityConverter x:Key="VisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
-        <local:VisibilityConverter x:Key="InvertedVisibility" TrueValue="Collapsed" FalseValue="Visible"/>
-        
+        <local:VisibilityConverter x:Key="VisibilityConverter" True="Visible" False="Collapsed"/>
+        <local:VisibilityConverter x:Key="InvertedVisibility" True="Collapsed" False="Visible"/>
         <!-- appbar for search page -->
         <shell:ApplicationBar x:Key="AppBar_SearchPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Minimized" Opacity="0.5">
             <shell:ApplicationBar.MenuItems>
@@ -31,8 +31,7 @@
         </shell:ApplicationBar>
         <!-- appbar for lists page -->
         <shell:ApplicationBar x:Key="AppBar_ListsPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Default" Opacity="0.5">
-            <shell:ApplicationBarIconButton IconUri="/images/appbar.add.rest.png" Text="new list" Click="NewList_Click"/>
-            <shell:ApplicationBarIconButton IconUri="/images/appbar.delete.rest.png" Text="delete" Click="DeleteList_Click" IsEnabled="False"/>
+            <shell:ApplicationBarIconButton IconUri="/images/appbar.add.rest.png" Text="add" Click="NewList_Click"/>
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="settings" Click="Settings_Click"/>
             </shell:ApplicationBar.MenuItems>
@@ -79,11 +78,16 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
-                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="15,0,9,0" Visibility="{Binding IsEditable, Converter={StaticResource InvertedVisibility}}"/>
-                                    <Border Height="100" Width="100" BorderBrush="{StaticResource PhoneAccentBrush}" BorderThickness="5" Margin="15,0,9,0" Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}"/>
+                                    <toolkit:ContextMenuService.ContextMenu>
+                                        <toolkit:ContextMenu x:Name="ListContextMenu" IsEnabled="{Binding ElementName=ListsPane, Path=DataContext.NotEditing}">
+                                            <toolkit:MenuItem Header="rename" Click="RenameList_Click"/>
+                                            <toolkit:MenuItem Header="delete" Click="DeleteList_Click"/>
+                                        </toolkit:ContextMenu>
+                                    </toolkit:ContextMenuService.ContextMenu>
+                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="15,0,9,0"/>
                                     <StackPanel Width="330">
                                         <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource InvertedVisibility}}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,6,12,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                        <TextBox x:Name="NewList_Name" InputScope="Text" Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}" Loaded="NewList_Loaded" GotFocus="NewList_GotFocus" LostFocus="NewList_LostFocus" KeyDown="NewList_KeyDown"/>
+                                        <local:TextBox2 Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}" InputScope="Text" VisibilityChanged="ListEdit_VisibilityChanged" GotFocus="ListEdit_GotFocus" LostFocus="ListEdit_LostFocus" KeyDown="ListEdit_KeyDown"/>
                                         <TextBlock Text="{Binding LineTwo}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
                                     </StackPanel>
                                 </StackPanel>
