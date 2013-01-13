@@ -24,13 +24,13 @@
         <local:VisibilityConverter x:Key="VisibilityConverter" True="Visible" False="Collapsed"/>
         <local:VisibilityConverter x:Key="InvertedVisibility" True="Collapsed" False="Visible"/>
         <!-- appbar for search page -->
-        <shell:ApplicationBar x:Key="AppBar_SearchPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Minimized" Opacity="0.5">
+        <shell:ApplicationBar x:Key="AppBar_SearchPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Minimized" BackgroundColor="Black" Opacity="0.8">
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="settings" Click="Settings_Click"/>
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
         <!-- appbar for lists page -->
-        <shell:ApplicationBar x:Key="AppBar_ListsPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Default" Opacity="0.5">
+        <shell:ApplicationBar x:Key="AppBar_ListsPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Default" BackgroundColor="Black" Opacity="0.8">
             <shell:ApplicationBarIconButton IconUri="/images/appbar.add.rest.png" Text="add" Click="NewList_Click"/>
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="settings" Click="Settings_Click"/>
@@ -45,7 +45,7 @@
                     <TextBox x:Name="Query" InputScope="Search" GotFocus="Query_GotFocus" LostFocus="Query_LostFocus" KeyDown="Query_KeyDown" Text="english, pin1yin1 or 中文"/>
                     <TextBlock x:Name="Status" Text=" " TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" />
                     <ProgressBar x:Name="Progress" Visibility="Collapsed"/>
-                    <ListBox x:Name="Results" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="550" SelectionChanged="ListBox_SelectionChanged">
+                    <ListBox x:Name="Results" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="540" SelectionChanged="ListBox_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
@@ -62,7 +62,7 @@
                                     <StackPanel x:Name="ActionPanel" Margin="0,-10,0,10" Orientation="Horizontal" Visibility="Collapsed">
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=SearchPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>
                                         <c4f:RoundButton x:Name="CopyButton" ImageSource="/kuaishuo2;component/images/CopyButton.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="CopyButton_Click"/>
-                                        <!--<c4f:RoundButton x:Name="NotepadButton" ImageSource="/kuaishuo2;component/images/appbar.add.rest.png" Tag="{Binding Index}" IsEnabled="{Binding Index, Converter={StaticResource NotepadLookup}}" Margin="0,0,0,0" Click="NotepadButton_Click"/>-->
+                                        <c4f:RoundButton x:Name="AddToListButton" ImageSource="/kuaishuo2;component/images/feature.add.png" Tag="{Binding Index}" IsEnabled="{Binding Index, Converter={StaticResource NotepadLookup}}" Margin="0,0,0,0" Click="AddToListButton_Click"/>
                                         <c4f:RoundButton x:Name="SearchButton" ImageSource="/kuaishuo2;component/images/appbar.feature.search.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="SearchButton_Click"/>
                                         <c4f:RoundButton x:Name="DecomposeButton" ImageSource="/kuaishuo2;component/images/Scissors.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="DecomposeButton_Click" IsEnabled="{Binding Chinese, Converter={StaticResource MinLengthChecker}}"/>
                                     </StackPanel>
@@ -87,7 +87,7 @@
                                     <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="15,0,9,0"/>
                                     <StackPanel Width="330">
                                         <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource InvertedVisibility}}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,6,12,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                        <local:TextBox2 Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}" InputScope="Text" VisibilityChanged="ListEdit_VisibilityChanged" GotFocus="ListEdit_GotFocus" LostFocus="ListEdit_LostFocus" KeyDown="ListEdit_KeyDown"/>
+                                        <local:TextBox2 Text="{Binding Name}" Visibility="{Binding IsEditable, Mode=TwoWay, Converter={StaticResource VisibilityConverter}}" InputScope="Text" VisibilityChanged="ListEdit_VisibilityChanged" GotFocus="ListEdit_GotFocus" LostFocus="ListEdit_LostFocus" KeyDown="ListEdit_KeyDown"/>
                                         <TextBlock Text="{Binding LineTwo}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
                                     </StackPanel>
                                 </StackPanel>

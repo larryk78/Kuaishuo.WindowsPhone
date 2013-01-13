@@ -154,6 +154,37 @@ namespace kuaishuo2
             base.Remove(a);
         }
 
+        /// <summary>
+        /// Gets the default, writable list (if there is only one).
+        /// </summary>
+        /// <returns>The default list or null if there is 0/2+.</returns>
+        public DictionaryRecordList DefaultList()
+        {
+            DictionaryRecordList theList = null;
+            foreach (DictionaryRecordList list in this.Values)
+                if (!list.ReadOnly && !list.IsDeleted)
+                    if (theList != null)
+                        return null;
+                    else
+                        theList = list;
+            return theList;
+        }
+
+        /// <summary>
+        /// Gets the number of writeable (i.e. not read-only) lists.
+        /// </summary>
+        public int CountWriteable
+        {
+            get
+            {
+                int n = 0;
+                foreach (DictionaryRecordList list in this.Values)
+                    if (!list.ReadOnly && !list.IsDeleted)
+                        n++;
+                return n;
+            }
+        }
+
         const string _ListsDirectory = "lists";
         bool DirectoryExists = false;
         string ListsDirectory

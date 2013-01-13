@@ -90,6 +90,8 @@ namespace kuaishuo2
 
         public new void Add(DictionaryRecord record)
         {
+            if (this.Contains(record))
+                return;
             base.Add(record);
             IsModified = true;
         }

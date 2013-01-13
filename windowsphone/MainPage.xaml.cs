@@ -37,6 +37,9 @@ namespace kuaishuo2
         bool ok = false;
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            if (defaultQueryText == null)
+                defaultQueryText = Query.Text;
+
             if (ok) // already loaded (e.g. coming back from settings page)
                 return;
 
@@ -97,13 +100,11 @@ namespace kuaishuo2
 
         #region toggle search query placeholder text
 
-        string defaultText = null;
+        string defaultQueryText = null;
         bool appBarVisibility;
         void Query_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (defaultText == null)
-                defaultText = Query.Text;
-            if (Query.Text.Equals(defaultText))
+            if (Query.Text.Equals(defaultQueryText))
                 Query.Text = "";
             else
                 Query.SelectAll();
@@ -114,7 +115,7 @@ namespace kuaishuo2
         void Query_LostFocus(object sender, RoutedEventArgs e)
         {
             if (Query.Text.Length == 0)
-                Query.Text = defaultText;
+                Query.Text = defaultQueryText;
             ApplicationBar.IsVisible = appBarVisibility;
         }
 
@@ -177,9 +178,6 @@ namespace kuaishuo2
 
         private void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!ok)
-                return;
-
             switch (((Pivot)sender).SelectedIndex)
             {
                 case 0: // search page
@@ -253,6 +251,34 @@ namespace kuaishuo2
                 lastCopy.Background = new SolidColorBrush();
             lastCopy = button;
              */
+        }
+
+        #endregion
+
+        #region add-to-list action
+
+        DictionaryRecord RecordToAdd = null;
+        private void AddToListButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            int i = int.Parse(button.Tag.ToString());
+            DictionaryRecord record = d[i];
+            App app = (App)Application.Current;
+            switch (app.ListManager.CountWriteable)
+            {
+                case 0:
+                    MessageBox.Show("You need to create a list before you can add items to it.");
+                    return;
+                case 1:
+                    DictionaryRecordList list = app.ListManager.DefaultList();
+                    list.Add(record);
+                    OpenList(list.Name);
+                    break;
+                default:
+                    RecordToAdd = record;
+                    pivot.SelectedIndex = pivot.Items.IndexOf(ListsPane);
+                    break;
+            }
         }
 
         #endregion
@@ -344,8 +370,11 @@ namespace kuaishuo2
             ListViewModel lvm = new ListViewModel();
             lvm.LoadData();
             ListsPane.DataContext = lvm;
-            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // enable add new list
-            ApplicationBar.IsVisible = true;
+            if (pivot.SelectedItem.Equals(ListsPane))
+            {
+                ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // enable add new list
+                ApplicationBar.IsVisible = true;
+            }
         }
 
         private void NewList_Click(object sender, EventArgs e)
@@ -386,9 +415,8 @@ namespace kuaishuo2
         void ListEdit_VisibilityChanged(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
-            if (textBox.Visibility == System.Windows.Visibility.Collapsed)
-                return;
-            textBox.Focus();
+            if (textBox.Visibility == Visibility.Visible)
+                textBox.Focus();
         }
 
         private void ListEdit_GotFocus(object sender, RoutedEventArgs e)
@@ -450,20 +478,39 @@ namespace kuaishuo2
         {
             ListBox list = (ListBox)sender;
             int item = list.SelectedIndex;
+            list.SelectedIndex = -1; // reset
             if (item == -1)
                 return;
-            list.SelectedIndex = -1; // reset
 
             ListViewModel lvm = (ListViewModel)ListsPane.DataContext;
             if (lvm.EditInProgress) // don't open lists while adding/renaming
                 return;
 
             ListItemViewModel ivm = (ListItemViewModel)list.Items[item];
-            App app = (App)Application.Current;
-            app.ListManager[ivm.Name].IsDeleted = false; // opening restores a deleted list
-            LoadLists();
+            if (RecordToAdd != null)
+            {
+                App app = (App)Application.Current;
+                DictionaryRecordList target = app.ListManager[ivm.Name];
+                target.Add(RecordToAdd);
+                RecordToAdd = null;
+            }
+            
+            OpenList(ivm.Name);
+        }
 
-            string uri = String.Format("/ListPage.xaml?name={0}", ivm.Name);
+        void OpenList(string name)
+        {
+            App app = (App)Application.Current;
+            if (!app.ListManager.ContainsKey(name))
+                return;
+
+            if (app.ListManager[name].IsDeleted)
+            {
+                app.ListManager[name].IsDeleted = false; // opening restores a deleted list
+                LoadLists(); // refresh to catch undelete
+            }
+
+            string uri = String.Format("/ListPage.xaml?name={0}", name);
             NavigationService.Navigate(new Uri(uri, UriKind.Relative));
         }
 

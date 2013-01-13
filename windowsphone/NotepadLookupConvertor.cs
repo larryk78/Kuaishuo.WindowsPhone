@@ -19,8 +19,12 @@ namespace kuaishuo2
         {
             if (DesignerProperties.IsInDesignTool)
                 return true;
-            Settings settings = new Settings();
-            return !settings.NotepadItemsSetting.Contains((int)value);
+            App app = (App)Application.Current;
+            bool availableList = false;
+            foreach (DictionaryRecordList list in app.ListManager.Values)
+                if (!list.ReadOnly && !list.IsDeleted)
+                    availableList = true;
+            return availableList;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

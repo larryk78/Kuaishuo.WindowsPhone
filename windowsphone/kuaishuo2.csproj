@@ -134,6 +134,7 @@
   <ItemGroup>
     <Resource Include="Images\appbar.feature.search.rest.png" />
     <Resource Include="Images\Scissors.png" />
+    <Resource Include="Images\feature.add.png" />
     <Content Include="Images\feature.email.png" />
     <Content Include="lists\0.list" />
     <None Include="Service References\BingTranslator\kuaishuo2.BingTranslator.GetTranslationsResponse.datasource">
