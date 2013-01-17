@@ -411,13 +411,26 @@ namespace kuaishuo2
             sb.AppendLine("________________________________________");
             sb.AppendLine("CC-CEDICT ed. " + d.Header["date"]);
             sb.AppendLine();
-            sb.AppendLine(s2.ToString());
-            sb.AppendLine("This extract redistributed under license. " + d.Header["license"]);
 
-            EmailComposeTask email = new EmailComposeTask();
-            email.Subject = "[Kuaishuo] notepad";
-            email.Body = sb.ToString();
-            email.Show();
+            if (sb.ToString().Length < 30000)
+                sb.AppendLine(s2.ToString());
+
+            sb.AppendLine("Redistributed under license. " + d.Header["license"]);
+
+            try
+            {
+                EmailComposeTask email = new EmailComposeTask();
+                email.Subject = "[Kuaishuo] notepad";
+                email.Body = sb.ToString();
+                email.Show();
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                int size = sb.ToString().Length / 1024;
+                MessageBox.Show(String.Format(
+                    "Sorry, Windows Phone has a 64KB size limit for emails sent from applications. " +
+                    "Your notepad contains too many items to email ({0}KB). Please remove some and try again.", size));
+            }
         }
     }
 }
