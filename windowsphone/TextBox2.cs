@@ -1,42 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace kuaishuo2
 {
     public class TextBox2 : TextBox
     {
+        public event VisibilityChangedEventHandler VisibilityChanged;
+        public delegate void VisibilityChangedEventHandler(object sender, EventArgs e);
+        public static readonly DependencyProperty VisibilityChangedProperty = DependencyProperty.Register(
+            "VisibilityChanged", typeof(VisibilityChangedEventHandler), typeof(TextBox2), null);
+
+        static readonly DependencyProperty MirrorVisibilityProperty = DependencyProperty.Register(
+            "MirrorVisibility", typeof(Visibility), typeof(TextBox2), new PropertyMetadata(MirrorVisibilityChanged));
+
         public TextBox2()
         {
-            DefaultStyleKey = typeof(TextBox);
+            SetBinding(TextBox2.MirrorVisibilityProperty, new Binding("Visibility") { Source = this });
         }
 
-        public static readonly DependencyProperty VisibilityChangedProperty = DependencyProperty.Register(
-            "VisibilityChanged",
-            typeof(string),
-            typeof(TextBox2),
-            new PropertyMetadata("Set the VisibilityChanged event handler"));
-
-        public event VisibilityChangedEventHandler VisibilityChanged;
-
-        public delegate void VisibilityChangedEventHandler(object sender, EventArgs e);
-
-        public new Visibility Visibility
+        static void MirrorVisibilityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            get
-            {
-                return base.Visibility;
-            }
-            set
-            {
-                if (base.Visibility != value)
-                {
-                    base.Visibility = value;
-                    VisibilityChanged(this, new EventArgs());
-                }
-            }
+            ((TextBox2)obj).VisibilityChanged(obj, null);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Text;
+using System.Threading;
 
 using CC_CEDICT.WindowsPhone;
 
@@ -12,7 +13,7 @@ namespace kuaishuo2
     public class ListManager2 : Dictionary<string, DictionaryRecordList>
     {
         /// <summary>
-        /// Wraps a DictionaryRecordList to add management functionality.
+        /// Wraps DictionaryRecordList to add management functionality.
         /// </summary>
         class ManagedList : DictionaryRecordList
         {
@@ -46,9 +47,10 @@ namespace kuaishuo2
             {
                 try
                 {
-                    if (!IsModified) // save not required
+                    if (IsDeleted || !IsModified) // save not required
                         return;
 
+                    Debug.WriteLine("ManagedList.Save(): {0} ({1} entries)", SavePath, this.Count);
                     using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
                     {
                         if (store.FileExists(SavePath))
@@ -75,6 +77,7 @@ namespace kuaishuo2
                     if (!IsDeleted)
                         return;
 
+                    Debug.WriteLine("ManagedList.Delete(): {0}", SavePath);
                     using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
                         store.DeleteFile(SavePath);
                 }
@@ -85,7 +88,9 @@ namespace kuaishuo2
             }
         }
 
+        Timer AutoSave;
         int MaxListIdentifier = -1;
+
         public ListManager2()
         {
             try
@@ -109,6 +114,13 @@ namespace kuaishuo2
             {
                 Debug.WriteLine("Couldn't load lists: {0}", ex.Message);
             }
+
+            // set up auto-save so that lists aren't only saved when the app shuts down
+            AutoSave = new Timer((o) =>
+            {
+                foreach (ManagedList list in this.Values)
+                    list.Save();
+            }, null, 5000, 5000);
         }
 
         /// <summary>

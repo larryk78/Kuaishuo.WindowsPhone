@@ -23,6 +23,7 @@
         <local:MinimumLengthConvertor x:Key="MinLengthChecker"/>
         <local:VisibilityConverter x:Key="VisibilityConverter" True="Visible" False="Collapsed"/>
         <local:VisibilityConverter x:Key="InvertedVisibility" True="Collapsed" False="Visible"/>
+        <local:InvertedBooleanConverter x:Key="InvertedBoolean"/>
         <!-- appbar for search page -->
         <shell:ApplicationBar x:Key="AppBar_SearchPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Minimized" BackgroundColor="Black" Opacity="0.8">
             <shell:ApplicationBar.MenuItems>
@@ -74,21 +75,23 @@
             </controls:PivotItem>
             <controls:PivotItem x:Name="ListsPane" Header="lists" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/ListViewModelSampleData.xaml}">
                 <StackPanel x:Name="ListsPaneContent" Orientation="Vertical">
-                    <ListBox x:Name="ListListBox" VirtualizingStackPanel.VirtualizationMode="Standard" Margin="0,0,0,0" ItemsSource="{Binding Items}" Height="600" SelectionChanged="ListListBox_SelectionChanged_OpenList">
+                    <ListBox x:Name="ListListBox" VirtualizingStackPanel.VirtualizationMode="Standard" Margin="0,0,0,0" ItemsSource="{Binding Items}" Height="600" SelectionChanged="ListListBox_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
                                     <toolkit:ContextMenuService.ContextMenu>
                                         <toolkit:ContextMenu x:Name="ListContextMenu" IsEnabled="{Binding ElementName=ListsPane, Path=DataContext.NotEditing}">
                                             <toolkit:MenuItem Header="rename" Click="RenameList_Click"/>
-                                            <toolkit:MenuItem Header="delete" Click="DeleteList_Click"/>
+                                            <toolkit:MenuItem Header="delete" Click="DeleteList_Click" IsEnabled="{Binding IsDeleted, Converter={StaticResource InvertedBoolean}}"/>
                                         </toolkit:ContextMenu>
                                     </toolkit:ContextMenuService.ContextMenu>
-                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="15,0,9,0"/>
+                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="15,0,9,0">
+                                        <Image Source="/kuaishuo2;component/images/delete.png" Visibility="{Binding IsDeleted, Converter={StaticResource VisibilityConverter}}" />
+                                    </Border>
                                     <StackPanel Width="330">
                                         <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource InvertedVisibility}}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,6,12,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                        <local:TextBox2 Text="{Binding Name}" Visibility="{Binding IsEditable, Mode=TwoWay, Converter={StaticResource VisibilityConverter}}" InputScope="Text" VisibilityChanged="ListEdit_VisibilityChanged" GotFocus="ListEdit_GotFocus" LostFocus="ListEdit_LostFocus" KeyDown="ListEdit_KeyDown"/>
-                                        <TextBlock Text="{Binding LineTwo}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                        <local:TextBox2 Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}" InputScope="Text" Loaded="ListEdit_Loaded" VisibilityChanged="ListEdit_VisibilityChanged" GotFocus="ListEdit_GotFocus" LostFocus="ListEdit_LostFocus" KeyDown="ListEdit_KeyDown"/>
+                                        <TextBlock Text="{Binding LineTwo}" TextWrapping="NoWrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>

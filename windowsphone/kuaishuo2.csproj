@@ -70,6 +70,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="DictionaryRecordList.cs" />
+    <Compile Include="InvertedBooleanConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ListManager2.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -135,6 +138,8 @@
     <Resource Include="Images\appbar.feature.search.rest.png" />
     <Resource Include="Images\Scissors.png" />
     <Resource Include="Images\feature.add.png" />
+    <Resource Include="Images\feature.delete.png" />
+    <Resource Include="Images\delete.png" />
     <Content Include="Images\feature.email.png" />
     <Content Include="lists\0.list" />
     <None Include="Service References\BingTranslator\kuaishuo2.BingTranslator.GetTranslationsResponse.datasource">

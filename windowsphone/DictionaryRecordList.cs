@@ -19,7 +19,7 @@ namespace kuaishuo2
         public bool IsModified = false;
 
         /// <summary>
-        /// Indicates whether this list should be deleted.
+        /// Indicates whether this list is marked as deleted.
         /// </summary>
         /// <remarks>
         /// Effectively indicates whether the ListManager should delete it from disk (i.e. when the app exits).
@@ -47,7 +47,7 @@ namespace kuaishuo2
         {
             foreach (DictionaryRecord record in dictionary)
                 base.Add(record);
-            
+
             try
             {
                 Name = dictionary.Header[NameHeaderKey];
@@ -57,6 +57,7 @@ namespace kuaishuo2
             {
             }
 
+            this.Sort();
             IsModified = false;
         }
 
@@ -93,6 +94,7 @@ namespace kuaishuo2
             if (this.Contains(record))
                 return;
             base.Add(record);
+            this.Sort();
             IsModified = true;
         }
 

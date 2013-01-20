@@ -60,7 +60,7 @@
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <ScrollViewer>
                 <StackPanel>
-                    <TextBlock Text="Pinyin Colouring" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                    <TextBlock Text="Pinyin Tone Colours" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
                     <TextBlock Text="Select a colour scheme for Pinyin syllables." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
                     <toolkit:ListPicker x:Name="PinyinColorPicker" ItemTemplate="{StaticResource PinyinColorItemTemplate}" ItemsSource="{Binding Source={StaticResource colors}}" SelectedIndex="{Binding Source={StaticResource settings}, Path=PinyinColorSetting, Mode=TwoWay}" />
                     <TextBlock Text="Text-to-Speech Audio Quality" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>

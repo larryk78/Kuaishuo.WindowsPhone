@@ -76,6 +76,23 @@ namespace kuaishuo2
             }
         }
 
+        private bool _isDeleted = false;
+        public bool IsDeleted
+        {
+            get
+            {
+                return _isDeleted;
+            }
+            set
+            {
+                if (value != _isDeleted)
+                {
+                    _isDeleted = value;
+                    NotifyPropertyChanged("IsDeleted");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(String propertyName)
         {

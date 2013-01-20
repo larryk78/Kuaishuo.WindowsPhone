@@ -94,6 +94,8 @@ namespace kuaishuo2
             s = new Searcher(d, new Index("english.index"), new Index("pinyin.index"), new Index("hanzi.index"));
             Status.Text = "Enter your search phrase above.";
             ok = true;
+            App app = (App)Application.Current;
+            app.Dictionary = d;
         }
 
         #endregion
@@ -182,11 +184,23 @@ namespace kuaishuo2
             {
                 case 0: // search page
                     ApplicationBar = ((ApplicationBar)Resources["AppBar_SearchPivotPage"]);
+                    if (RecordToAdd != null)
+                        RecordToAdd = null; // cancel the incomplete add-to-list action
                     break;
                 case 1: // lists page
                     ApplicationBar = ((ApplicationBar)Resources["AppBar_ListsPivotPage"]);
                     CreateDefaultList();
                     LoadLists();
+                    if (RecordToAdd != null) // disable list creation while adding
+                    {
+                        ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = false;
+                        ApplicationBar.Mode = ApplicationBarMode.Minimized;
+                    }
+                    else
+                    {
+                        ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true;
+                        ApplicationBar.Mode = ApplicationBarMode.Default;
+                    }
                     break;
             }
             ApplicationBar.IsVisible = true;
@@ -257,7 +271,11 @@ namespace kuaishuo2
 
         #region add-to-list action
 
+        /// <summary>
+        /// Defines the record to be added to a list. While non-null we are in "add-to-list" mode.
+        /// </summary>
         DictionaryRecord RecordToAdd = null;
+
         private void AddToListButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
@@ -267,7 +285,7 @@ namespace kuaishuo2
             switch (app.ListManager.CountWriteable)
             {
                 case 0:
-                    MessageBox.Show("You need to create a list before you can add items to it.");
+                    MessageBox.Show("You need to create a list before you can save items to it.");
                     return;
                 case 1:
                     DictionaryRecordList list = app.ListManager.DefaultList();
@@ -355,9 +373,14 @@ namespace kuaishuo2
             App app = (App)Application.Current;
             DictionaryRecordList list = app.ListManager[DefaultListName];
             s.NotepadCreatedSetting = true;
-            
+
             if (s.NotepadItemsSetting.Count == 0) // no (old) notepad items to migrate
-                return;
+            {
+                // TEST CODE
+                for (int i = 0; i < 800; i++)
+                    list.Add(d[i + 50000]);
+                //return;
+            }
 
             foreach (int id in s.NotepadItemsSetting)
                 list.Add(d[id]);
@@ -372,7 +395,7 @@ namespace kuaishuo2
             ListsPane.DataContext = lvm;
             if (pivot.SelectedItem.Equals(ListsPane))
             {
-                ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // enable add new list
+                ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // (re-)enable add new list
                 ApplicationBar.IsVisible = true;
             }
         }
@@ -381,7 +404,7 @@ namespace kuaishuo2
         {
             ListViewModel lvm = (ListViewModel)ListsPane.DataContext;
             lvm.EditInProgress = true;
-            ListItemViewModel item = new ListItemViewModel { Name = "", LineTwo = "Enter a name and hit return.", IsEditable = true };
+            ListItemViewModel item = new ListItemViewModel { Name = "", LineTwo = "Enter a name for your new list.", IsEditable = true };
             lvm.Items.Insert(0, item);
             ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = false; // disable "multi-add"
         }
@@ -411,12 +434,18 @@ namespace kuaishuo2
             LoadLists();
         }
 
-        //void ListEdit_Loaded(object sender, RoutedEventArgs e)
+        void ListEdit_Loaded(object sender, RoutedEventArgs e)
+        {
+            ListEdit_VisibilityChanged(sender, null);
+        }
+
         void ListEdit_VisibilityChanged(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
-            if (textBox.Visibility == Visibility.Visible)
-                textBox.Focus();
+            if (textBox.Visibility == Visibility.Collapsed)
+                return;
+            textBox.Select(textBox.Text.Length, 0); // position cursor at end
+            textBox.Focus();
         }
 
         private void ListEdit_GotFocus(object sender, RoutedEventArgs e)
@@ -441,8 +470,11 @@ namespace kuaishuo2
             }
             RenameListMode = false; // turn off renaming mode
             lvm.EditInProgress = false; // to reenable context menu
-            ApplicationBar.IsVisible = true;
-            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // re-enable add list
+            if (pivot.SelectedItem.Equals(ListsPane)) // check they didn't pivot away
+            {
+                ApplicationBar.IsVisible = true;
+                ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // re-enable add list
+            }
         }
 
         private void ListEdit_KeyDown(object sender, KeyEventArgs e)
@@ -452,14 +484,11 @@ namespace kuaishuo2
             TextBox textBox = (TextBox)sender;
             string name = textBox.Text.Trim();
             if (name.Length == 0)
-            {
-                MessageBox.Show("Name cannot be blank.");
                 return;
-            }
             App app = (App)Application.Current;
             if (name != OldName && app.ListManager.ContainsKey(name))
             {
-                MessageBox.Show(String.Format("There is already a list called '{0}'. Choose a unique name.", name));
+                MessageBox.Show(String.Format("There is already a list called '{0}'. Please choose another name.", name));
                 return;
             }
             if (RenameListMode)
@@ -474,7 +503,7 @@ namespace kuaishuo2
             LoadLists();
         }
 
-        private void ListListBox_SelectionChanged_OpenList(object sender, SelectionChangedEventArgs e)
+        private void ListListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox list = (ListBox)sender;
             int item = list.SelectedIndex;
@@ -487,12 +516,15 @@ namespace kuaishuo2
                 return;
 
             ListItemViewModel ivm = (ListItemViewModel)list.Items[item];
-            if (RecordToAdd != null)
+            if (RecordToAdd != null) // user is selecting a target list to add an entry
             {
                 App app = (App)Application.Current;
                 DictionaryRecordList target = app.ListManager[ivm.Name];
+                if (target.IsDeleted)
+                    return; // can't add items to a deleted list
                 target.Add(RecordToAdd);
-                RecordToAdd = null;
+                RecordToAdd = null; // come out of add-to-list mode
+                LoadLists();
             }
             
             OpenList(ivm.Name);

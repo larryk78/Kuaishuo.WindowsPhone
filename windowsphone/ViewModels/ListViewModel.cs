@@ -28,10 +28,10 @@ namespace kuaishuo2
                 DictionaryRecordList list = app.ListManager[name];
                 string lineTwo;
                 if (list.IsDeleted)
-                    lineTwo = "To be deleted on exit. Open to undo.";
+                    lineTwo = "To be removed. Open to undo.";
                 else
                     lineTwo = String.Format("{0} entr{1}", list.Count, (list.Count == 1 ? "y" : "ies"));
-                Items.Add(new ListItemViewModel { Name = list.Name, LineTwo = lineTwo });
+                Items.Add(new ListItemViewModel { Name = list.Name, LineTwo = lineTwo, IsDeleted = list.IsDeleted });
             }
         }
 

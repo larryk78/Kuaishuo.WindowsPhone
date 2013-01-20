@@ -8,8 +8,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using System.Text;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using Microsoft.Phone.Tasks;
 
 using CC_CEDICT.WindowsPhone;
 
@@ -29,35 +31,31 @@ namespace kuaishuo2
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             App app = (App)Application.Current;
+            d = app.Dictionary;
             list = app.ListManager[NavigationContext.QueryString["name"]];
             NotepadPane.Header = list.Name;
+            LoadListData();
+        }
+
+        void LoadListData()
+        {
             MainViewModel mvm = new MainViewModel();
             mvm.LoadData(list);
             this.DataContext = mvm;
-            //d = new Dictionary("cedict_ts.u8");
         }
-
-        #region notepad view (inc. add/remove items)
 
         void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            Settings settings = new Settings();
-            List<int> items = settings.NotepadItemsSetting;
             Button button = (Button)sender;
-            int i;
-            int.TryParse(button.Tag.ToString(), out i);
-            items.Remove(i);
-            settings.NotepadItemsSetting = items;
+            DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
+            list.Remove(record);
+            LoadListData();
+            previous = -1;
         }
-
-        #endregion
         
         #region expand/collapse list items
 
-        Dictionary<string, int> prev = new Dictionary<string, int>();
-        // IMPORTANT: this event handler is used by both search and notepad lists
-        // DO NOT USE Results or NotepadItems objects directly
-        // DO USE (ListBox)sender to ensure the correct list is manipulated
+        int previous = -1;
         void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox list = (ListBox)sender;
@@ -65,20 +63,18 @@ namespace kuaishuo2
             if (item == -1)
                 return;
 
-            int previous = prev.ContainsKey(list.Name) ? prev[list.Name] : -1;
             if (previous != item)
             {
                 ToggleView(list, item, true);
                 if (previous != -1)
                     ToggleView(list, previous, false);
-                prev[list.Name] = item;
+                previous = item;
             }
 
             list.SelectedIndex = -1; // reset
             list.ScrollIntoView(list.Items[item]);
         }
 
-        //Brush old;
         void ToggleView(ListBox list, int index, bool expand)
         {
             ListBoxItem item = (ListBoxItem)list.ItemContainerGenerator.ContainerFromIndex(index);
@@ -94,15 +90,12 @@ namespace kuaishuo2
                 defaultView.Visibility = Visibility.Collapsed;
                 expandedView.Visibility = Visibility.Visible;
                 actionPanel.Visibility = Visibility.Visible;
-                //old = item.BorderBrush;
-                //item.BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
             }
             else
             {
                 defaultView.Visibility = Visibility.Visible;
                 expandedView.Visibility = Visibility.Collapsed;
                 actionPanel.Visibility = Visibility.Collapsed;
-                //item.BorderBrush = old;
             }
         }
 
@@ -127,9 +120,8 @@ namespace kuaishuo2
         void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            int i;
-            int.TryParse(button.Tag.ToString(), out i);
-            TextToSpeech tts = new TextToSpeech(d[i]);
+            DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
+            TextToSpeech tts = new TextToSpeech(record);
             Settings settings = new Settings();
             if (!tts.Speak(settings.AudioQualitySetting == 0 ? false : true))
             {
@@ -143,20 +135,11 @@ namespace kuaishuo2
 
         #region Copy-to-Clipboard action
 
-        //Button lastCopy;
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            int i;
-            int.TryParse(button.Tag.ToString(), out i);
-            DictionaryRecord r = d[i];
-            Clipboard.SetText(r.Chinese.Simplified);
-            /*
-            button.Background = new SolidColorBrush(SystemColors.HighlightColor);
-            if (lastCopy != null)
-                lastCopy.Background = new SolidColorBrush();
-            lastCopy = button;
-             */
+            DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
+            Clipboard.SetText(record.Chinese.Simplified);
         }
 
         #endregion
@@ -165,7 +148,6 @@ namespace kuaishuo2
 
         private void EmailButton_Click(object sender, EventArgs e)
         {
-            /*
             StringBuilder sb = new StringBuilder();
             StringBuilder s2 = new StringBuilder();
 
@@ -182,14 +164,26 @@ namespace kuaishuo2
             sb.AppendLine("________________________________________");
             sb.AppendLine("CC-CEDICT ed. " + d.Header["date"]);
             sb.AppendLine();
-            sb.AppendLine(s2.ToString());
-            sb.AppendLine("This extract redistributed under license. " + d.Header["license"]);
 
-            EmailComposeTask email = new EmailComposeTask();
-            email.Subject = "[Kuaishuo] notepad";
-            email.Body = sb.ToString();
-            email.Show();
-             */
+            if (Encoding.UTF8.GetBytes(sb.ToString()).Length < 30000)
+                sb.AppendLine(s2.ToString());
+
+            sb.AppendLine("Redistributed under license. " + d.Header["license"]);
+
+            try
+            {
+                EmailComposeTask email = new EmailComposeTask();
+                email.Subject = "[Kuaishuo] notepad";
+                email.Body = sb.ToString();
+                email.Show();
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                int size = Encoding.UTF8.GetBytes(sb.ToString()).Length / 1024;
+                MessageBox.Show(String.Format(
+                    "Sorry, Windows Phone has a 64KB size limit for emails sent from applications. " +
+                    "Your notepad contains too many items to email ({0}KB). Please remove some and try again.", size));
+            }
         }
 
         #endregion

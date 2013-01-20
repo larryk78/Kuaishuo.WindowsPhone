@@ -13,6 +13,8 @@ using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 
+using CC_CEDICT.WindowsPhone;
+
 namespace kuaishuo2
 {
     public partial class App : Application
@@ -45,6 +47,8 @@ namespace kuaishuo2
                 return _ListManager;
             }
         }
+
+        public Dictionary Dictionary;
 
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
