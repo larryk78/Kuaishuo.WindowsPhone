@@ -421,9 +421,6 @@ namespace kuaishuo2
             DictionaryRecordList list = app.ListManager["notepad"];
             s.NotepadCreatedSetting = true;
 
-            for (int i = 0; i < 500; i++) // TEST TEST TEST TEST TEST TEST TEST TEST TEST
-                s.NotepadItemsSetting.Add(i + 50000);
-
             if (s.NotepadItemsSetting.Count > 0) // migrate old notepad to list
             {
                 bool PatienceMessageShown = false;
