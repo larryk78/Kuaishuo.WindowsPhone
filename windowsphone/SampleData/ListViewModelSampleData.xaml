@@ -4,11 +4,11 @@
     xmlns:local="clr-namespace:kuaishuo2">
 
     <local:ListViewModel.Items>
-        <local:ListItemViewModel Name="notepad" LineTwo="21 entries" IsDeleted="False" LineThree="Maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur"/>
-        <local:ListItemViewModel Name="shopping list" LineTwo="5 entries" IsDeleted="True" LineThree="Senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum dictumst eleifend"/>
-        <local:ListItemViewModel Name="HSK 1" LineTwo="100 entries" IsDeleted="False" LineThree="Pharetra placerat pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent"/>
-        <local:ListItemViewModel Name="HSK 2" LineTwo="101 entries" IsDeleted="False" LineThree="Accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur pharetra placerat"/>
-        <local:ListItemViewModel Name="HSK 3" LineTwo="200 entries" IsDeleted="False" LineThree="Pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum"/>
+        <local:ListItemViewModel Name="notepad" LineTwo="21" IsDeleted="False" LineThree="Maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur"/>
+        <local:ListItemViewModel Name="shopping list" LineTwo="5" IsDeleted="True" LineThree="Senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum dictumst eleifend"/>
+        <local:ListItemViewModel Name="HSK Level 1" LineTwo="1" IsDeleted="False" LineThree="Pharetra placerat pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent"/>
+        <local:ListItemViewModel Name="HSK Level 2" LineTwo="3" IsDeleted="False" LineThree="Accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur pharetra placerat"/>
+        <local:ListItemViewModel Name="HSK Level 3" LineTwo="384" IsDeleted="False" LineThree="Pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum"/>
     </local:ListViewModel.Items>
 
 </local:ListViewModel>

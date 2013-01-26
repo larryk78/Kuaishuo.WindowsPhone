@@ -26,12 +26,26 @@ namespace kuaishuo2
             foreach (string name in lists)
             {
                 DictionaryRecordList list = app.ListManager[name];
-                string lineTwo;
-                if (list.IsDeleted)
-                    lineTwo = "To be removed. Open to undo.";
-                else
-                    lineTwo = String.Format("{0} entr{1}", list.Count, (list.Count == 1 ? "y" : "ies"));
+                string lineTwo = list.Count.ToString();
                 Items.Add(new ListItemViewModel { Name = list.Name, LineTwo = lineTwo, IsDeleted = list.IsDeleted });
+            }
+        }
+
+        private bool _AddInProgress = false;
+        public bool AddInProgress
+        {
+            get
+            {
+                return _AddInProgress;
+            }
+            set
+            {
+                if (value != _AddInProgress)
+                {
+                    _AddInProgress = value;
+                    NotifyPropertyChanged("AddInProgress");
+                    NotifyPropertyChanged("NotBusy");
+                }
             }
         }
 
@@ -48,19 +62,19 @@ namespace kuaishuo2
                 {
                     _EditInProgress = value;
                     NotifyPropertyChanged("EditInProgress");
-                    NotifyPropertyChanged("NotEditing");
+                    NotifyPropertyChanged("NotBusy");
                 }
             }
         }
 
         /// <summary>
-        /// Inverse of EditInProgress for XAML binding.
+        /// Inverse of Add/EditInProgress for XAML binding.
         /// </summary>
-        public bool NotEditing
+        public bool NotBusy
         {
             get
             {
-                return !EditInProgress;
+                return (!AddInProgress && !EditInProgress);
             }
         }
 

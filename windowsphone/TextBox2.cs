@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
@@ -25,7 +26,8 @@ namespace kuaishuo2
 
         static void MirrorVisibilityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            ((TextBox2)obj).VisibilityChanged(obj, null);
+            if (!DesignerProperties.IsInDesignTool)
+                ((TextBox2)obj).VisibilityChanged(obj, null);
         }
     }
 }

@@ -53,6 +53,44 @@ namespace kuaishuo2
                 LoadDictionary();
         }
 
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        {
+            App app = (App)Application.Current;
+            Debug.WriteLine("Coming back as {0}", app.Transition);
+            switch (app.Transition)
+            {
+                case App.TransitionType.PostAdd: // after add to list, go back to search page
+                    pivot.SelectedItem = SearchPane;
+                    break;
+                case App.TransitionType.ListUpdate: // after delete, list page needs an update
+                    LoadLists();
+                    break;
+                case App.TransitionType.Specialise: // from SearchButton_Click on lists page
+                    pivot.SelectedItem = SearchPane;
+                    Search(app.TransitionData);
+                    break;
+                case App.TransitionType.Decompose: // from DecomposeButton_Click on lists page
+                    pivot.SelectedItem = SearchPane;
+                    Decompose(app.TransitionData);
+                    break;
+                case App.TransitionType.MoveItem: // moving an item from one list to another
+                    RecordToAdd = app.TransitionData;
+                    pivot.SelectedItem = ListsPane;
+                    break;
+                case App.TransitionType.None:
+                default:
+                    break;
+            }
+            CleanupTransitionData(app);
+            base.OnNavigatedTo(e);
+        }
+
+        void CleanupTransitionData(App app)
+        {
+            app.Transition = App.TransitionType.None;
+            app.TransitionData = null;
+        }
+
         #region decompress LZMA resources (dictionary, indexes)
 
         int inProgress = 0;
@@ -64,6 +102,7 @@ namespace kuaishuo2
             decoder.ProgressChanged += new ProgressChangedEventHandler(decoder_ProgressChanged);
             decoder.RunWorkerCompleted += new RunWorkerCompletedEventHandler(decoder_RunWorkerCompleted);
             Progress.Visibility = System.Windows.Visibility.Visible;
+            Status.Visibility = System.Windows.Visibility.Visible;
             decoder.DecodeAsync(file + ".lzma", file);
         }
 
@@ -169,9 +208,13 @@ namespace kuaishuo2
             int i;
             int.TryParse(button.Tag.ToString(), out i);
             DictionaryRecord record = d[i];
+            Search(record);
+        }
+
+        void Search(DictionaryRecord record)
+        {
             Query.Text = record.Chinese.Simplified;
             TriggerSearch(Query.Text, 30);
-            pivot.SelectedIndex = pivot.Items.IndexOf(SearchPane);
         }
 
         #endregion
@@ -216,6 +259,11 @@ namespace kuaishuo2
             int i;
             int.TryParse(button.Tag.ToString(), out i);
             DictionaryRecord record = d[i];
+            Decompose(record);
+        }
+
+        void Decompose(DictionaryRecord record)
+        {
             List<DictionaryRecord> results = new List<DictionaryRecord>();
             results.Add(record);
             foreach (Chinese.Character c in record.Chinese.Characters)
@@ -225,7 +273,6 @@ namespace kuaishuo2
             Status.Visibility = System.Windows.Visibility.Collapsed;
             App.ViewModel.LoadData(results);
             Results.ScrollIntoView(Results.Items[0]);
-            pivot.SelectedIndex = pivot.Items.IndexOf(SearchPane);
         }
 
         #endregion
@@ -290,6 +337,8 @@ namespace kuaishuo2
                 case 1:
                     DictionaryRecordList list = app.ListManager.DefaultList();
                     list.Add(record);
+                    app.Transition = App.TransitionType.PostAdd;
+                    app.TransitionData = record;
                     OpenList(list.Name);
                     break;
                 default:
@@ -359,8 +408,6 @@ namespace kuaishuo2
 
         #region list handling
 
-        string DefaultListName = "notepad";
-
         /// <summary>
         /// Create default "notepad" list (once).
         /// </summary>
@@ -369,23 +416,34 @@ namespace kuaishuo2
             Settings s = new Settings();
             if (s.NotepadCreatedSetting)
                 return;
-
+            
             App app = (App)Application.Current;
-            DictionaryRecordList list = app.ListManager[DefaultListName];
+            DictionaryRecordList list = app.ListManager["notepad"];
             s.NotepadCreatedSetting = true;
 
-            if (s.NotepadItemsSetting.Count == 0) // no (old) notepad items to migrate
+            for (int i = 0; i < 500; i++) // TEST TEST TEST TEST TEST TEST TEST TEST TEST
+                s.NotepadItemsSetting.Add(i + 50000);
+
+            if (s.NotepadItemsSetting.Count > 0) // migrate old notepad to list
             {
-                // TEST CODE
-                for (int i = 0; i < 800; i++)
-                    list.Add(d[i + 50000]);
-                //return;
+                bool PatienceMessageShown = false;
+                DateTime start = DateTime.Now;
+                foreach (int id in s.NotepadItemsSetting)
+                {
+                    list.Add(d[id]);
+                    TimeSpan elapsed = DateTime.Now - start;
+                    if (!PatienceMessageShown && elapsed.TotalSeconds > 1)
+                    {
+                        MessageBox.Show(
+                            "Your notepad is being converted into a new style list. " + 
+                            "This may take a few more seconds so please be patient. " +
+                            "Look for the 'notepad' list when the update completes.");
+                        PatienceMessageShown = true;
+                    }
+                }
+
+                s.NotepadItemsSetting.Clear(); // empty old notepad
             }
-
-            foreach (int id in s.NotepadItemsSetting)
-                list.Add(d[id]);
-
-            s.NotepadItemsSetting.Clear(); // empty old notepad
         }
 
         void LoadLists()
@@ -397,6 +455,8 @@ namespace kuaishuo2
             {
                 ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true; // (re-)enable add new list
                 ApplicationBar.IsVisible = true;
+                if (RecordToAdd != null)
+                    lvm.AddInProgress = true;
             }
         }
 
@@ -404,7 +464,7 @@ namespace kuaishuo2
         {
             ListViewModel lvm = (ListViewModel)ListsPane.DataContext;
             lvm.EditInProgress = true;
-            ListItemViewModel item = new ListItemViewModel { Name = "", LineTwo = "Enter a name for your new list.", IsEditable = true };
+            ListItemViewModel item = new ListItemViewModel { Name = "", LineTwo = "", IsEditable = true };
             lvm.Items.Insert(0, item);
             ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = false; // disable "multi-add"
         }
@@ -523,10 +583,13 @@ namespace kuaishuo2
                 if (target.IsDeleted)
                     return; // can't add items to a deleted list
                 target.Add(RecordToAdd);
+                app.Transition = App.TransitionType.PostAdd;
+                app.TransitionData = RecordToAdd;
                 RecordToAdd = null; // come out of add-to-list mode
                 LoadLists();
             }
-            
+
+            lvm.AddInProgress = false;
             OpenList(ivm.Name);
         }
 

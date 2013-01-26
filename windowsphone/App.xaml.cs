@@ -48,7 +48,29 @@ namespace kuaishuo2
             }
         }
 
+        /// <summary>
+        /// CC_CEDICT.Dictionary shared between search and list pages (latter for email).
+        /// </summary>
         public Dictionary Dictionary;
+
+        #region page transition support
+
+        /// <summary>
+        /// Defines the transition types from list page to search page.
+        /// </summary>
+        public enum TransitionType { None, PostAdd, ListUpdate, Specialise, Decompose, MoveItem };
+
+        /// <summary>
+        /// The transition requested by the list page.
+        /// </summary>
+        public TransitionType Transition = TransitionType.None;
+
+        /// <summary>
+        /// Associated transition data for the <see cref="Transition"/> specified.
+        /// </summary>
+        public DictionaryRecord TransitionData;
+
+        #endregion
 
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.

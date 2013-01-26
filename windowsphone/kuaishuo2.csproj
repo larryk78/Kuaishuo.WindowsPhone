@@ -69,6 +69,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BooleanColorConverter.cs" />
     <Compile Include="DictionaryRecordList.cs" />
     <Compile Include="InvertedBooleanConverter.cs">
       <SubType>Code</SubType>
@@ -141,6 +142,7 @@
     <Resource Include="Images\feature.delete.png" />
     <Resource Include="Images\delete.png" />
     <Content Include="Images\feature.email.png" />
+    <Resource Include="Images\feature.move.png" />
     <Content Include="lists\0.list" />
     <None Include="Service References\BingTranslator\kuaishuo2.BingTranslator.GetTranslationsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>

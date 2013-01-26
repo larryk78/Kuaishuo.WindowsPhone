@@ -17,7 +17,6 @@
     shell:SystemTray.IsVisible="True">
 
     <UserControl.Resources>
-        <local:NotepadLookupConvertor x:Key="NotepadLookup"/>
         <local:MinimumLengthConvertor x:Key="MinLengthChecker"/>
     </UserControl.Resources>
 
@@ -26,7 +25,7 @@
         <controls:Pivot Title="KUAISHUO CHINESE DICTIONARY">
             <controls:PivotItem x:Name="NotepadPane" Header=" " Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}">
                 <StackPanel x:Name="NotepadPaneContent" Margin="0,0,-12,0" Orientation="Vertical" d:LayoutOverrides="Height">
-                    <ListBox x:Name="NotepadItems" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="600" SelectionChanged="ListBox_SelectionChanged">
+                    <ListBox x:Name="NotepadItems" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="558" SelectionChanged="ListBox_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
@@ -44,8 +43,8 @@
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=NotepadPane, Path=DataContext.NetworkAvailable}" Margin="0,0,0,0" Click="PlayButton_Click"/>
                                         <c4f:RoundButton x:Name="CopyButton" ImageSource="/kuaishuo2;component/images/CopyButton.png" Margin="0,0,0,0" Click="CopyButton_Click"/>
                                         <c4f:RoundButton x:Name="DeleteButton" ImageSource="/kuaishuo2;component/images/feature.delete.png" Margin="0,0,0,0" Click="DeleteButton_Click"/>
-                                        <!--<c4f:RoundButton x:Name="SearchButton" ImageSource="/kuaishuo2;component/images/appbar.feature.search.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="SearchButton_Click"/>
-                                        <c4f:RoundButton x:Name="DecomposeButton" ImageSource="/kuaishuo2;component/images/Scissors.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="DecomposeButton_Click" IsEnabled="{Binding Chinese, Converter={StaticResource MinLengthChecker}}"/>-->
+                                        <c4f:RoundButton x:Name="SearchButton" ImageSource="/kuaishuo2;component/images/appbar.feature.search.rest.png" Tag="{Binding Index}" Margin="0,0,0,0" Click="SearchButton_Click"/>
+                                        <c4f:RoundButton x:Name="DecomposeButton" ImageSource="/kuaishuo2;component/images/Scissors.png" Margin="0,0,0,0" Click="DecomposeButton_Click" IsEnabled="{Binding Chinese, Converter={StaticResource MinLengthChecker}}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -57,8 +56,11 @@
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="False" Mode="Minimized" Opacity="0.5">
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Mode="Default">
             <shell:ApplicationBarIconButton IconUri="/images/feature.email.png" Text="Email" Click="EmailButton_Click"/>
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="settings" Click="Settings_Click"/>
+            </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
     

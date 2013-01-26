@@ -28,13 +28,17 @@ namespace kuaishuo2
         Dictionary d;
         DictionaryRecordList list;
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        void Page_Loaded(object sender, RoutedEventArgs e)
         {
             App app = (App)Application.Current;
             d = app.Dictionary;
             list = app.ListManager[NavigationContext.QueryString["name"]];
             NotepadPane.Header = list.Name;
             LoadListData();
+            if (app.Transition == App.TransitionType.PostAdd) // scroll the added item into view
+            {
+                //NotepadItems.ScrollIntoView // TODO: find the newly-added item
+            }
         }
 
         void LoadListData()
@@ -42,18 +46,8 @@ namespace kuaishuo2
             MainViewModel mvm = new MainViewModel();
             mvm.LoadData(list);
             this.DataContext = mvm;
+            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = (list.Count == 0) ? false : true;
         }
-
-        void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = (Button)sender;
-            DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
-            list.Remove(record);
-            LoadListData();
-            previous = -1;
-        }
-        
-        #region expand/collapse list items
 
         int previous = -1;
         void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -99,11 +93,7 @@ namespace kuaishuo2
             }
         }
 
-        #endregion
-
-        #region colour Pinyin
-
-        private void Pinyin_Loaded(object sender, EventArgs e)
+        void Pinyin_Loaded(object sender, EventArgs e)
         {
             TextBlock textBlock = (TextBlock)sender;
             ItemViewModel item = (ItemViewModel)textBlock.DataContext;
@@ -112,10 +102,6 @@ namespace kuaishuo2
             Settings settings = new Settings();
             p.Colorize(textBlock, record, (PinyinColorScheme)settings.PinyinColorSetting);
         }
-
-        #endregion
-
-        #region Text-to-Speech button
 
         void PlayButton_Click(object sender, RoutedEventArgs e)
         {
@@ -131,22 +117,45 @@ namespace kuaishuo2
             }
         }
 
-        #endregion
-
-        #region Copy-to-Clipboard action
-
-        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
             DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
             Clipboard.SetText(record.Chinese.Simplified);
         }
 
-        #endregion
+        void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            App app = (App)Application.Current;
+            app.Transition = App.TransitionType.ListUpdate;
+            Button button = (Button)sender;
+            DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
+            list.Remove(record);
+            LoadListData();
+            previous = -1;
+        }
 
-        #region email
+        void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
+            App app = (App)Application.Current;
+            app.Transition = App.TransitionType.Specialise;
+            app.TransitionData = record;
+            NavigationService.GoBack();
+        }
 
-        private void EmailButton_Click(object sender, EventArgs e)
+        void DecomposeButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
+            App app = (App)Application.Current;
+            app.Transition = App.TransitionType.Decompose;
+            app.TransitionData = record;
+            NavigationService.GoBack();
+        }
+
+        void EmailButton_Click(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
             StringBuilder s2 = new StringBuilder();
@@ -164,10 +173,10 @@ namespace kuaishuo2
             sb.AppendLine("________________________________________");
             sb.AppendLine("CC-CEDICT ed. " + d.Header["date"]);
             sb.AppendLine();
-
+            /*
             if (Encoding.UTF8.GetBytes(sb.ToString()).Length < 30000)
                 sb.AppendLine(s2.ToString());
-
+            */
             sb.AppendLine("Redistributed under license. " + d.Header["license"]);
 
             try
@@ -186,6 +195,9 @@ namespace kuaishuo2
             }
         }
 
-        #endregion
+        void Settings_Click(object sender, EventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/SettingsPage.xaml", UriKind.Relative));
+        }
     }
 }

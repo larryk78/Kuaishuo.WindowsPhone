@@ -24,14 +24,15 @@
         <local:VisibilityConverter x:Key="VisibilityConverter" True="Visible" False="Collapsed"/>
         <local:VisibilityConverter x:Key="InvertedVisibility" True="Collapsed" False="Visible"/>
         <local:InvertedBooleanConverter x:Key="InvertedBoolean"/>
+        <local:BooleanColorConverter x:Key="ListItemColor" True="Gray" False="{StaticResource PhoneAccentBrush}"/>
         <!-- appbar for search page -->
-        <shell:ApplicationBar x:Key="AppBar_SearchPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Minimized" BackgroundColor="Black" Opacity="0.8">
+        <shell:ApplicationBar x:Key="AppBar_SearchPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Minimized">
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="settings" Click="Settings_Click"/>
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
         <!-- appbar for lists page -->
-        <shell:ApplicationBar x:Key="AppBar_ListsPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Default" BackgroundColor="Black" Opacity="0.8">
+        <shell:ApplicationBar x:Key="AppBar_ListsPivotPage" IsVisible="True" IsMenuEnabled="True" Mode="Default">
             <shell:ApplicationBarIconButton IconUri="/images/appbar.add.rest.png" Text="add" Click="NewList_Click"/>
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="settings" Click="Settings_Click"/>
@@ -44,18 +45,18 @@
             <controls:PivotItem x:Name="SearchPane" Header="search" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}">
                 <StackPanel x:Name="SearchPaneContent" Margin="0,-12,-12,0" Orientation="Vertical" d:LayoutOverrides="Height">
                     <TextBox x:Name="Query" InputScope="Search" GotFocus="Query_GotFocus" LostFocus="Query_LostFocus" KeyDown="Query_KeyDown" Text="english, pin1yin1 or 中文"/>
-                    <TextBlock x:Name="Status" Text=" " TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" />
+                    <TextBlock x:Name="Status" Text=" " TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Visibility="Collapsed"/>
                     <ProgressBar x:Name="Progress" Visibility="Collapsed"/>
-                    <ListBox x:Name="Results" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="540" SelectionChanged="ListBox_SelectionChanged">
+                    <ListBox x:Name="Results" ItemsSource="{Binding Items}" VirtualizingStackPanel.VirtualizationMode="Standard" Height="538" SelectionChanged="ListBox_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <StackPanel x:Name="DefaultView" Margin="0,0,0,17">
+                                    <StackPanel x:Name="DefaultView" Margin="0,0,0,12">
                                         <TextBlock Text="{Binding Pinyin}" Loaded="Pinyin_Loaded" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding English}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-4,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
                                         <TextBlock Text="{Binding Chinese}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
-                                    <StackPanel x:Name="ExpandedView" Margin="0,0,0,17" Visibility="Collapsed">
+                                    <StackPanel x:Name="ExpandedView" Margin="0,0,0,12" Visibility="Collapsed">
                                         <TextBlock Text="{Binding Pinyin}" Loaded="Pinyin_Loaded" TextWrapping="Wrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding EnglishWithNewlines}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-4,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
                                         <TextBlock Text="{Binding Chinese}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
@@ -75,23 +76,62 @@
             </controls:PivotItem>
             <controls:PivotItem x:Name="ListsPane" Header="lists" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/ListViewModelSampleData.xaml}">
                 <StackPanel x:Name="ListsPaneContent" Orientation="Vertical">
-                    <ListBox x:Name="ListListBox" VirtualizingStackPanel.VirtualizationMode="Standard" Margin="0,0,0,0" ItemsSource="{Binding Items}" Height="600" SelectionChanged="ListListBox_SelectionChanged">
+                    <ListBox x:Name="ListListBox" VirtualizingStackPanel.VirtualizationMode="Standard" Margin="0,0,0,0" ItemsSource="{Binding Items}" Height="558" SelectionChanged="ListListBox_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                     <toolkit:ContextMenuService.ContextMenu>
-                                        <toolkit:ContextMenu x:Name="ListContextMenu" IsEnabled="{Binding ElementName=ListsPane, Path=DataContext.NotEditing}">
+                                        <toolkit:ContextMenu x:Name="ListContextMenu" IsEnabled="{Binding ElementName=ListsPane, Path=DataContext.NotBusy}">
                                             <toolkit:MenuItem Header="rename" Click="RenameList_Click"/>
                                             <toolkit:MenuItem Header="delete" Click="DeleteList_Click" IsEnabled="{Binding IsDeleted, Converter={StaticResource InvertedBoolean}}"/>
                                         </toolkit:ContextMenu>
                                     </toolkit:ContextMenuService.ContextMenu>
-                                    <Border Height="100" Width="100" Background="{StaticResource PhoneAccentBrush}" Margin="15,0,9,0">
-                                        <Image Source="/kuaishuo2;component/images/delete.png" Visibility="{Binding IsDeleted, Converter={StaticResource VisibilityConverter}}" />
+                                    <Border Height="62" Width="62" Background="{Binding IsDeleted, Converter={StaticResource ListItemColor}}" Margin="14,0,3,0">
+                                        <StackPanel>
+                                            <StackPanel Visibility="{Binding IsDeleted, Converter={StaticResource InvertedVisibility}}">
+                                                <TextBlock
+                                                    Text="{Binding LineTwo}"
+                                                    Width="62"
+                                                    Margin="0,-14,0,0"
+                                                    Style="{StaticResource PhoneTextNormalStyle}"
+                                                    TextAlignment="Center"
+                                                    FontSize="42"
+                                                    FontWeight="Bold"
+                                                    Foreground="{StaticResource PhoneForegroundBrush}"
+                                                    Visibility="{Binding ElementName=ListsPane, Path=DataContext.AddInProgress, Converter={StaticResource InvertedVisibility}}"
+                                                    Opacity="1">
+                                                    <TextBlock.RenderTransform>
+                                                        <ScaleTransform ScaleX="1.0" ScaleY="1.5" />
+                                                    </TextBlock.RenderTransform>
+                                                </TextBlock>
+                                                <c4f:RoundButton
+                                                    Margin="-5,5,0,0"
+                                                    ImageSource="/kuaishuo2;component/images/feature.add.png"
+                                                    Visibility="{Binding ElementName=ListsPane, Path=DataContext.AddInProgress, Converter={StaticResource VisibilityConverter}}"
+                                                    IsEnabled="False" />
+                                            </StackPanel>
+                                            <Image Source="/kuaishuo2;component/images/delete.png" Visibility="{Binding IsDeleted, Converter={StaticResource VisibilityConverter}}" />
+                                        </StackPanel>
                                     </Border>
-                                    <StackPanel Width="330">
-                                        <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource InvertedVisibility}}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,6,12,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                        <local:TextBox2 Text="{Binding Name}" Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}" InputScope="Text" Loaded="ListEdit_Loaded" VisibilityChanged="ListEdit_VisibilityChanged" GotFocus="ListEdit_GotFocus" LostFocus="ListEdit_LostFocus" KeyDown="ListEdit_KeyDown"/>
-                                        <TextBlock Text="{Binding LineTwo}" TextWrapping="NoWrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                    <StackPanel Width="350">
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0" Visibility="{Binding IsEditable, Converter={StaticResource InvertedVisibility}}">
+                                            <TextBlock
+                                                Text="{Binding Name}"
+                                                Margin="12,0,0,0"
+                                                TextWrapping="NoWrap"
+                                                TextTrimming="WordEllipsis"
+                                                Style="{StaticResource PhoneTextLargeStyle}"/>
+                                        </StackPanel>
+                                        <local:TextBox2
+                                            Text="{Binding Name}"
+                                            Margin="0,-5,0,-5"
+                                            Visibility="{Binding IsEditable, Converter={StaticResource VisibilityConverter}}"
+                                            InputScope="Search"
+                                            Loaded="ListEdit_Loaded"
+                                            VisibilityChanged="ListEdit_VisibilityChanged"
+                                            GotFocus="ListEdit_GotFocus"
+                                            LostFocus="ListEdit_LostFocus"
+                                            KeyDown="ListEdit_KeyDown"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
