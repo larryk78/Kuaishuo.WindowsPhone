@@ -53,6 +53,17 @@ namespace kuaishuo2
                 LoadDictionary();
         }
 
+        protected override void OnBackKeyPress(CancelEventArgs e)
+        {
+            if (pivot.SelectedItem.Equals(ListsPane))
+            {
+                e.Cancel = true;
+                pivot.SelectedItem = SearchPane;
+            }
+
+            base.OnBackKeyPress(e);
+        }
+
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             App app = (App)Application.Current;
@@ -60,7 +71,7 @@ namespace kuaishuo2
             switch (app.Transition)
             {
                 case App.TransitionType.PostAdd: // after add to list, go back to search page
-                    pivot.SelectedItem = SearchPane;
+                    //pivot.SelectedItem = SearchPane; // looks ugly
                     break;
                 case App.TransitionType.ListUpdate: // after delete, list page needs an update
                     LoadLists();
