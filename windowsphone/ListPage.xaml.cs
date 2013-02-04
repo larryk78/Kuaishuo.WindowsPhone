@@ -173,16 +173,16 @@ namespace kuaishuo2
             sb.AppendLine("________________________________________");
             sb.AppendLine("CC-CEDICT ed. " + d.Header["date"]);
             sb.AppendLine();
-            /*
-            if (Encoding.UTF8.GetBytes(sb.ToString()).Length < 30000)
+            
+            if (Encoding.UTF8.GetBytes(sb.ToString()).Length < 16384)
                 sb.AppendLine(s2.ToString());
-            */
+            
             sb.AppendLine("Redistributed under license. " + d.Header["license"]);
 
             try
             {
                 EmailComposeTask email = new EmailComposeTask();
-                email.Subject = "[Kuaishuo] notepad";
+                email.Subject = String.Format("[Kuaishuo] {0}", list.Name);
                 email.Body = sb.ToString();
                 email.Show();
             }

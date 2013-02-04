@@ -29,17 +29,17 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <StackPanel x:Name="DefaultView" Margin="0,0,0,17">
+                                    <StackPanel x:Name="DefaultView" Margin="0,0,0,15">
                                         <TextBlock Text="{Binding Pinyin}" Loaded="Pinyin_Loaded" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding English}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-4,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
                                         <TextBlock Text="{Binding Chinese}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
-                                    <StackPanel x:Name="ExpandedView" Margin="0,0,0,17" Visibility="Collapsed">
+                                    <StackPanel x:Name="ExpandedView" Margin="0,0,0,15" Visibility="Collapsed">
                                         <TextBlock Text="{Binding Pinyin}" Loaded="Pinyin_Loaded" TextWrapping="Wrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                                         <TextBlock Text="{Binding EnglishWithNewlines}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-4,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
                                         <TextBlock Text="{Binding Chinese}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
-                                    <StackPanel x:Name="ActionPanel" Margin="0,-10,0,10" Orientation="Horizontal" Visibility="Collapsed">
+                                    <StackPanel x:Name="ActionPanel" Margin="0,-5,0,0" Orientation="Horizontal" Visibility="Collapsed">
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=NotepadPane, Path=DataContext.NetworkAvailable}" Margin="0,0,0,0" Click="PlayButton_Click"/>
                                         <c4f:RoundButton x:Name="CopyButton" ImageSource="/kuaishuo2;component/images/CopyButton.png" Margin="0,0,0,0" Click="CopyButton_Click"/>
                                         <c4f:RoundButton x:Name="DeleteButton" ImageSource="/kuaishuo2;component/images/feature.delete.png" Margin="0,0,0,0" Click="DeleteButton_Click"/>

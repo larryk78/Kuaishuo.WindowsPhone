@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Text;
@@ -40,8 +41,12 @@ namespace kuaishuo2
             if (defaultQueryText == null)
                 defaultQueryText = Query.Text;
 
+            pivot.IsHitTestVisible = false; // lock pivot prior to dictionary extraction
             if (ok) // already loaded (e.g. coming back from settings page)
+            {
+                pivot.IsHitTestVisible = true; // unlock pivot since we are OK
                 return;
+            }
 
             List<string> files = new List<string> { "cedict_ts.u8", "english.index", "hanzi.index", "pinyin.index" };
             foreach (string file in files)
@@ -55,7 +60,12 @@ namespace kuaishuo2
 
         protected override void OnBackKeyPress(CancelEventArgs e)
         {
-            if (pivot.SelectedItem.Equals(ListsPane))
+            if (!ok)
+            {
+                MessageBox.Show("Please wait a few seconds until the dictionary and indexes are extracted.");
+                e.Cancel = true;
+            }
+            else if (pivot.SelectedItem.Equals(ListsPane))
             {
                 e.Cancel = true;
                 pivot.SelectedItem = SearchPane;
@@ -67,7 +77,6 @@ namespace kuaishuo2
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             App app = (App)Application.Current;
-            Debug.WriteLine("Coming back as {0}", app.Transition);
             switch (app.Transition)
             {
                 case App.TransitionType.PostAdd: // after add to list, go back to search page
@@ -144,6 +153,7 @@ namespace kuaishuo2
             s = new Searcher(d, new Index("english.index"), new Index("pinyin.index"), new Index("hanzi.index"));
             Status.Text = "Enter your search phrase above.";
             ok = true;
+            pivot.IsHitTestVisible = true; // unlock pivot now that dictionary has been extracted
             App app = (App)Application.Current;
             app.Dictionary = d;
         }
