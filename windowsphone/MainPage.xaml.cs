@@ -48,7 +48,8 @@ namespace kuaishuo2
                 return;
             }
 
-            List<string> files = new List<string> { "cedict_ts.u8", "english.index", "hanzi.index", "pinyin.index" };
+            List<string> files = new List<string> {
+                "cedict_ts.u8", "english.index", "hanzi.index", "pinyin.index", "hsklevel1.list", "hsklevel2.list" };
             foreach (string file in files)
                 using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
                     if (!store.FileExists(file))
@@ -111,7 +112,7 @@ namespace kuaishuo2
             app.TransitionData = null;
         }
 
-        #region decompress LZMA resources (dictionary, indexes)
+        #region decompress LZMA resources (dictionary, indexes, preinstalled lists)
 
         int inProgress = 0;
         void ExtractFile(string file)
@@ -139,6 +140,7 @@ namespace kuaishuo2
                 return;
             Progress.Visibility = System.Windows.Visibility.Collapsed; // don't need this any more
             LoadDictionary();
+            RealizePreinstalledLists();
         }
 
         #endregion
@@ -460,7 +462,24 @@ namespace kuaishuo2
                     }
                 }
 
-                s.NotepadItemsSetting.Clear(); // empty old notepad
+                s.NotepadItemsSetting.Clear(); // empty the old notepad so this doesn't happen twice
+            }
+        }
+
+        void RealizePreinstalledLists()
+        {
+            App app = (App)Application.Current;
+            using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                foreach (string file in store.GetFileNames("*.list"))
+                {
+                    Dictionary list = new Dictionary(file);
+                    string name = list.Header[DictionaryRecordList.NameHeaderKey];
+                    if (app.ListManager.ContainsKey(name))
+                        continue;
+                    foreach (DictionaryRecord r in list)
+                        app.ListManager[name].Add(r);
+                }
             }
         }
 

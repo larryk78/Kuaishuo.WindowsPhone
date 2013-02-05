@@ -144,6 +144,8 @@
     <Content Include="Images\feature.email.png" />
     <Resource Include="Images\feature.move.png" />
     <Content Include="lists\0.list" />
+    <Resource Include="hsklevel1.list.lzma" />
+    <Resource Include="hsklevel2.list.lzma" />
     <None Include="Service References\BingTranslator\kuaishuo2.BingTranslator.GetTranslationsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>

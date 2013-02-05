@@ -27,7 +27,7 @@ namespace kuaishuo2
         public bool IsDeleted = false;
 
         // metadata header
-        const string NameHeaderKey = "name";
+        public const string NameHeaderKey = "name";
         const string ReadOnlyHeaderKey = "readonly";
 
         /// <summary>
