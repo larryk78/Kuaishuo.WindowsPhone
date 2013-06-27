@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Microsoft.Phone.Tasks;
+using Coding4Fun.Phone.Controls;
 
 using CC_CEDICT.WindowsPhone;
 using SevenZip.Compression.LZMA.WindowsPhone;
@@ -327,7 +328,6 @@ namespace kuaishuo2
 
         #region Copy-to-Clipboard action
 
-        //Button lastCopy;
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
@@ -335,12 +335,13 @@ namespace kuaishuo2
             int.TryParse(button.Tag.ToString(), out i);
             DictionaryRecord r = d[i];
             Clipboard.SetText(r.Chinese.Simplified);
-            /*
-            button.Background = new SolidColorBrush(SystemColors.HighlightColor);
-            if (lastCopy != null)
-                lastCopy.Background = new SolidColorBrush();
-            lastCopy = button;
-             */
+            ToastPrompt toast = new ToastPrompt
+            {
+                Title = "Copy",
+                Message = "Text copied to clipboard",
+                MillisecondsUntilHidden = 1000
+            };
+            toast.Show();
         }
 
         #endregion
