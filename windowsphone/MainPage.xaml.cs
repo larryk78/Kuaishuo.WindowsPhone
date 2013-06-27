@@ -194,6 +194,12 @@ namespace kuaishuo2
                 return;
 
             Query.Text = Query.Text.Trim();
+            if (Query.Text.Length == 0)
+            {
+                Results.Focus();
+                return;
+            }
+
             int minRelevance = Query.Text.Equals(lastQuery) ? 30 : 75;
             TriggerSearch(Query.Text, minRelevance);
         }
