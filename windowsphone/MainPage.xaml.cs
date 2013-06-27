@@ -504,6 +504,7 @@ namespace kuaishuo2
             ListItemViewModel item = new ListItemViewModel { Name = "", LineTwo = "", IsEditable = true };
             lvm.Items.Insert(0, item);
             ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = false; // disable "multi-add"
+            ListListBox.ScrollIntoView(ListListBox.Items[0]);
         }
 
         bool RenameListMode = false;
@@ -598,6 +599,22 @@ namespace kuaishuo2
                 DictionaryRecordList list = app.ListManager[name];
             }
             LoadLists();
+            ListListBox.UpdateLayout();
+            int index = FindListItemIndexByName(ListListBox, name);
+            ListListBox.ScrollIntoView(ListListBox.Items[index]);
+        }
+
+        private int FindListItemIndexByName(ListBox list, string name)
+        {
+            ListViewModel lvm = (ListViewModel)list.DataContext;
+            int index = 0;
+            foreach (ListItemViewModel item in lvm.Items)
+            {
+                if (item.Name.Equals(name))
+                    return index;
+                index++;
+            }
+            return -1;
         }
 
         private void ListListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
