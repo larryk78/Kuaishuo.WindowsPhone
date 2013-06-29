@@ -218,13 +218,13 @@ namespace kuaishuo2
             if (results.Count == 0)
             {
                 Status.Text = String.Format("No results for '{0}'. Try another search.", query);
-                Status.Visibility = System.Windows.Visibility.Visible;
+                Status.Visibility = Visibility.Visible;
                 App.ViewModel.ClearData();
             }
             else // replace old search results with new
             {
                 Status.Text = String.Format("Showing results for '{0}' (omitted '{1}')", s.LastQuery, s.Ignored);
-                Status.Visibility = s.SmartSearch ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+                Status.Visibility = s.SmartSearch ? Visibility.Visible : Visibility.Collapsed;
                 App.ViewModel.LoadData(results);
             }
 
@@ -300,7 +300,7 @@ namespace kuaishuo2
                 results.AddRange(s.Search(c.Simplified.ToString(), 100));
             Query.Text = record.Chinese.Simplified + " (split)";
             prev[Results.Name] = -1; // override expansion marker
-            Status.Visibility = System.Windows.Visibility.Collapsed;
+            Status.Visibility = Visibility.Collapsed;
             App.ViewModel.LoadData(results);
             Results.ScrollIntoView(Results.Items[0]);
         }
