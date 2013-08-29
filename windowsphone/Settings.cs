@@ -73,17 +73,19 @@ namespace kuaishuo2
             }
         }
 
-        const string AudioQualitySettingKeyName = "AudioQualitySetting";
-        const int AudioQualitySettingDefault = 0;
-        public int AudioQualitySetting
+        const string AudioQualitySettingKeyName_OLD = "AudioQualitySetting";
+        const string AudioQualitySettingKeyName_NEW = "AudioQualitySetting2";
+        const int AudioQualitySettingDefault_OLD = 0; // 0=false, 1=true
+        public bool AudioQualitySetting
         {
             get
             {
-                return GetValueOrDefault<int>(AudioQualitySettingKeyName, AudioQualitySettingDefault);
+                int old = GetValueOrDefault<int>(AudioQualitySettingKeyName_OLD, AudioQualitySettingDefault_OLD);
+                return GetValueOrDefault<bool>(AudioQualitySettingKeyName_NEW, (bool)(old == 1));
             }
             set
             {
-                if (AddOrUpdateValue(AudioQualitySettingKeyName, value))
+                if (AddOrUpdateValue(AudioQualitySettingKeyName_NEW, value))
                     Save();
             }
         }

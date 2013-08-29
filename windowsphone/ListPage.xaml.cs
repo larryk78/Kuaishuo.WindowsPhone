@@ -109,7 +109,7 @@ namespace kuaishuo2
             DictionaryRecord record = ((ItemViewModel)button.DataContext).Record;
             TextToSpeech tts = new TextToSpeech(record);
             Settings settings = new Settings();
-            if (!tts.Speak(settings.AudioQualitySetting == 0 ? false : true))
+            if (!tts.Speak(settings.AudioQualitySetting))
             {
                 App.ViewModel.UpdateNetworkStatus(false);
                 MessageBox.Show("Sorry, Text-to-Speech is only available with a network connection.");

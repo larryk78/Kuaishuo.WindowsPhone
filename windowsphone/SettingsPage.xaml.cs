@@ -22,14 +22,5 @@ namespace kuaishuo2
         {
             InitializeComponent();
         }
-
-        private void AudioQualitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            Slider slider = (Slider)sender;
-            int rounded = (int)Math.Round(e.NewValue);
-            Debug.WriteLine("AudioQualitySlider rounded from {0} to {1}", e.NewValue, rounded);
-            slider.Value = rounded;
-            settings.AudioQualitySetting = rounded;
-        }
     }
 }

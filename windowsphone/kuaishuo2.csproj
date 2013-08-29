@@ -140,6 +140,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\twitterIcon.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />

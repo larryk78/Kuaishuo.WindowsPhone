@@ -316,7 +316,7 @@ namespace kuaishuo2
             int.TryParse(button.Tag.ToString(), out i);
             TextToSpeech tts = new TextToSpeech(d[i]);
             Settings settings = new Settings();
-            if (!tts.Speak(settings.AudioQualitySetting == 0 ? false : true))
+            if (!tts.Speak(settings.AudioQualitySetting))
             {
                 App.ViewModel.UpdateNetworkStatus(false);
                 MessageBox.Show("Sorry, Text-to-Speech is only available with a network connection.");

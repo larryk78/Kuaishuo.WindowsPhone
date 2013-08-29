@@ -43,7 +43,7 @@
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <controls:Pivot Title="KUAISHUO CHINESE DICTIONARY" x:Name="pivot" SelectionChanged="pivot_SelectionChanged">
             <controls:PivotItem x:Name="SearchPane" Header="search" Margin="12,8,12,0" d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}">
-                <Grid  Margin="0,-12,-12,0">
+                <Grid Margin="0,-12,-12,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>

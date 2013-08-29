@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:kuaishuo2"
@@ -22,70 +23,113 @@
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <controls:Pivot Title="KUAISHUO CHINESE DICTIONARY" x:Name="pivot">
+            
+            <controls:PivotItem x:Name="SettingsPane" Header="settings" Margin="12,8,12,0">
+                <Grid x:Name="ContentPanel" Grid.Row="1" Margin="0">
+                    <Grid.Resources>
+                        <DataTemplate x:Name="PinyinColorItemTemplate">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Background="{Binding Color1}" Width="30" Height="30" Margin="5,0,0,0">
+                                    <TextBlock Text="1" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                                </Border>
+                                <Border Background="{Binding Color2}" Width="30" Height="30" Margin="5,0,0,0">
+                                    <TextBlock Text="2" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                                </Border>
+                                <Border Background="{Binding Color3}" Width="30" Height="30" Margin="5,0,0,0">
+                                    <TextBlock Text="3" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                                </Border>
+                                <Border Background="{Binding Color4}" Width="30" Height="30" Margin="5,0,0,0">
+                                    <TextBlock Text="4" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                                </Border>
+                                <Border Background="{Binding Color5}" Width="30" Height="30" Margin="5,0,0,0">
+                                    <TextBlock Text="5" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="{Binding Name}" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,0,0" Foreground="Black"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </Grid.Resources>
+                    <ScrollViewer>
+                        <StackPanel>
+                            <TextBlock Text="Pinyin Tone Colours" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                            <TextBlock Text="Select a colour scheme for Pinyin syllables." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
+                            <toolkit:ListPicker x:Name="PinyinColorPicker" ItemTemplate="{StaticResource PinyinColorItemTemplate}" ItemsSource="{Binding Source={StaticResource colors}}" SelectedIndex="{Binding Source={StaticResource settings}, Path=PinyinColorSetting, Mode=TwoWay}" />
+                            <TextBlock Text="Text-to-Speech Audio Quality" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>
+                            <TextBlock Text="Lo-Fi uses less bandwidth. Hi-Fi is loud and clear." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="use Hi-Fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="92,0,20,0"/>
+                                <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Margin="0,10,0,0" Name="AudioQualityCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=AudioQualitySetting, Mode=TwoWay}" />
+                            </StackPanel>
+                            <TextBlock Text="Traditional Chinese Characters" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>
+                            <TextBlock Text="Used in Guangzhou, Hong Kong, Macau and Taiwan." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="enable" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="120,0,20,0"/>
+                                <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Margin="0,10,0,0" Name="TraditionalChineseCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=TraditionalChineseSetting, Mode=TwoWay}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </controls:PivotItem>
 
-        <Grid.Resources>
-            <DataTemplate x:Name="PinyinColorItemTemplate">
-                <StackPanel Orientation="Horizontal">
-                    <Border Background="{Binding Color1}" Width="30" Height="30" Margin="5,0,0,0">
-                        <TextBlock Text="1" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
-                    </Border>
-                    <Border Background="{Binding Color2}" Width="30" Height="30" Margin="5,0,0,0">
-                        <TextBlock Text="2" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
-                    </Border>
-                    <Border Background="{Binding Color3}" Width="30" Height="30" Margin="5,0,0,0">
-                        <TextBlock Text="3" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
-                    </Border>
-                    <Border Background="{Binding Color4}" Width="30" Height="30" Margin="5,0,0,0">
-                        <TextBlock Text="4" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
-                    </Border>
-                    <Border Background="{Binding Color5}" Width="30" Height="30" Margin="5,0,0,0">
-                        <TextBlock Text="5" Style="{StaticResource PhoneTextSmallStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
-                    </Border>
-                    <TextBlock Text="{Binding Name}" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,0,0" Foreground="Black"/>
-                </StackPanel>
-            </DataTemplate>
-        </Grid.Resources>
-        
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock x:Name="ApplicationTitle" Text="KUAISHUO CHINESE DICTIONARY" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageTitle" Text="settings+info" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
-        </StackPanel>
+            <controls:PivotItem x:Name="AboutPane" Header="about" Margin="12,8,12,0">
+                <Grid>
+                    <Grid.Resources>
+                        <Style x:Key="Hyperlink_NoUnderline" TargetType="HyperlinkButton">
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="HyperlinkButton">
+                                        <Border Background="Transparent">
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal"/>
+                                                    <VisualState x:Name="MouseOver"/>
+                                                    <VisualState x:Name="Pressed">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Duration="0" Storyboard.TargetName="TextElement" Storyboard.TargetProperty="Opacity" To="0.5" />
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Disabled">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextElement" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneDisabledBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                            <Border Background="{TemplateBinding Background}" Margin="{StaticResource PhoneHorizontalMargin}" Padding="{TemplateBinding Padding}" >
+                                                <TextBlock x:Name="TextElement" Text="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextWrapping="Wrap" TextDecorations="none"/>
+                                            </Border>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Vertical" Grid.Column="0">
+                        <TextBlock Text="Kuaishuo 1.0" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                        <TextBlock Text="Thank you for choosing Kuaishuo! Report bugs or request features on Twitter or the Kuaishuo blog." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
+                        <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://knibb.co.uk/kuaishuo" Content="http://knibb.co.uk/kuaishuo"/>
+                        <StackPanel Orientation="Horizontal" Margin="12">
+                            <Image Source="/kuaishuo2;component/images/twitterIcon.png" Height="50" Width="50" />
+                            <HyperlinkButton Style="{StaticResource Hyperlink_NoUnderline}" FontSize="24" HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://twitter.com/Kuaishuo" Content="@Kuaishuo"/>
+                        </StackPanel>
+                        <TextBlock Text="CC-CEDICT" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>
+                        <TextBlock Text="Kuaishuo uses the CC-CEDICT dictionary: a free, community-maintained resource. For more info:" TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
+                        <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://cc-cedict.org/wiki" Content="http://cc-cedict.org/wiki/"/>
+                        <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://creativecommons.org/licenses/by-sa/3.0/" Content="Creative Commons BY-SA 3.0 License" Margin="0,0,0,20"/>
+                    </StackPanel>
+                </Grid>
+            </controls:PivotItem>
 
-        <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <ScrollViewer>
-                <StackPanel>
-                    <TextBlock Text="Pinyin Tone Colours" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
-                    <TextBlock Text="Select a colour scheme for Pinyin syllables." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
-                    <toolkit:ListPicker x:Name="PinyinColorPicker" ItemTemplate="{StaticResource PinyinColorItemTemplate}" ItemsSource="{Binding Source={StaticResource colors}}" SelectedIndex="{Binding Source={StaticResource settings}, Path=PinyinColorSetting, Mode=TwoWay}" />
-                    <TextBlock Text="Text-to-Speech Audio Quality" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>
-                    <TextBlock Text="Lo-Fi uses less bandwidth. Hi-Fi is loud and clear." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="lo-fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="80,0,20,0"/>
-                        <Slider Height="100" Width="120" x:Name="AudioQualitySlider" Value="{Binding Source={StaticResource settings}, Path=AudioQualitySetting, Mode=TwoWay}" ValueChanged="AudioQualitySlider_ValueChanged" Minimum="0" Maximum="1" Margin="0,0,0,-30"/>
-                        <TextBlock Text="hi-fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="20,0,0,0"/>
-                    </StackPanel>
-                    <TextBlock Text="Traditional Chinese Characters" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>
-                    <TextBlock Text="Used in Guangzhou, Hong Kong, Macau and Taiwan." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="enable" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="120,0,20,0"/>
-                        <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Margin="0,10,0,0" Name="TraditionalChineseCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=TraditionalChineseSetting, Mode=TwoWay}"  />
-                    </StackPanel>
-                    <TextBlock Text="Kuaishuo" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
-                    <TextBlock Text="Thank you for choosing Kuaishuo! To report bugs or request features, please visit the Kuaishuo blog." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
-                    <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://www.knibb.co.uk/kuaishuo" Content="http://www.knibb.co.uk/kuaishuo"/>
-                    <TextBlock Text="CC-CEDICT" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,30,12,0"/>
-                    <TextBlock Text="Kuaishuo uses the CC-CEDICT dictionary: a free, community-maintained resource." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
-                    <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://cc-cedict.org/wiki" Content="http://cc-cedict.org/wiki/"/>
-                    <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://creativecommons.org/licenses/by-sa/3.0/" Content="CC-CEDICT License" Margin="0,0,0,20"/>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
+        </controls:Pivot>
     </Grid>
  
 </phone:PhoneApplicationPage>
