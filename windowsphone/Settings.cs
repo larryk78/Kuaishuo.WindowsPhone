@@ -9,13 +9,22 @@ using CC_CEDICT.WindowsPhone;
 
 namespace kuaishuo2
 {
-    public class Settings
+    public class Settings : INotifyPropertyChanged
     {
         IsolatedStorageSettings settings;
 
         public Settings()
         {
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+        } 
 
         public bool AddOrUpdateValue(string key, Object value)
         {
@@ -27,12 +36,14 @@ namespace kuaishuo2
                 if (!settings.Contains(key))
                 {
                     settings.Add(key, value);
+                    NotifyPropertyChanged(key);
                     return true;
                 }
 
                 if (settings[key] != value)
                 {
                     settings[key] = value;
+                    NotifyPropertyChanged(key);
                     return true;
                 }
 
@@ -86,6 +97,21 @@ namespace kuaishuo2
             set
             {
                 if (AddOrUpdateValue(AudioQualitySettingKeyName_NEW, value))
+                    Save();
+            }
+        }
+
+        const string LargeFontsSettingKeyName = "LargeFontsSetting";
+        const bool LargeFontsSettingDefault = false;
+        public bool LargeFontsSetting
+        {
+            get
+            {
+                return GetValueOrDefault<bool>(LargeFontsSettingKeyName, LargeFontsSettingDefault);
+            }
+            set
+            {
+                if (AddOrUpdateValue(LargeFontsSettingKeyName, value))
                     Save();
             }
         }

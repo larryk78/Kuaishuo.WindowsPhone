@@ -19,6 +19,8 @@
     shell:SystemTray.IsVisible="True">
 
     <UserControl.Resources>
+        <local:BooleanDoubleConverter x:Key="SmallFontSize" True="24" False="{StaticResource PhoneFontSizeNormal}"/>
+        <local:BooleanDoubleConverter x:Key="ChineseFontSize" True="36" False="{StaticResource PhoneFontSizeLarge}"/>
         <local:NotepadLookupConvertor x:Key="NotepadLookup"/>
         <local:MinimumLengthConvertor x:Key="MinLengthChecker"/>
         <local:VisibilityConverter x:Key="VisibilityConverter" True="Visible" False="Collapsed"/>
@@ -50,7 +52,7 @@
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Vertical" Grid.Row="0">
                         <TextBox x:Name="Query" InputScope="Search" GotFocus="Query_GotFocus" LostFocus="Query_LostFocus" KeyDown="Query_KeyDown" Text="english, pin1yin1 or 中文"/>
-                        <TextBlock x:Name="Status" Text=" " TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Visibility="Collapsed"/>
+                        <TextBlock x:Name="Status" Text=" " FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource SmallFontSize}}" TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Visibility="Collapsed"/>
                         <ProgressBar x:Name="Progress" Visibility="Collapsed"/>
                     </StackPanel>
                     <ListBox x:Name="Results" ItemsSource="{Binding Items}" Grid.Row="1" VirtualizingStackPanel.VirtualizationMode="Standard" SelectionChanged="ListBox_SelectionChanged">
@@ -59,13 +61,13 @@
                                 <StackPanel>
                                     <StackPanel x:Name="DefaultView" Margin="0,0,0,12">
                                         <TextBlock Text="{Binding Pinyin}" Loaded="Pinyin_Loaded" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                        <TextBlock Text="{Binding English}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-4,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                                        <TextBlock Text="{Binding Chinese}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
+                                        <TextBlock Text="{Binding English}" FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource SmallFontSize}}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-4,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                        <TextBlock Text="{Binding Chinese}" FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource ChineseFontSize}}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
                                     <StackPanel x:Name="ExpandedView" Margin="0,0,0,12" Visibility="Collapsed">
                                         <TextBlock Text="{Binding Pinyin}" Loaded="Pinyin_Loaded" TextWrapping="Wrap" TextTrimming="WordEllipsis" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                        <TextBlock Text="{Binding EnglishWithNewlines}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-4,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                                        <TextBlock Text="{Binding Chinese}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
+                                        <TextBlock Text="{Binding EnglishWithNewlines}" FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource SmallFontSize}}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-4,0,5" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                        <TextBlock Text="{Binding Chinese}" FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource ChineseFontSize}}" TextWrapping="Wrap" TextTrimming="WordEllipsis" Margin="12,-6,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
                                     </StackPanel>
                                     <StackPanel x:Name="ActionPanel" Margin="0,-5,0,0" Orientation="Horizontal" Visibility="Collapsed">
                                         <c4f:RoundButton x:Name="PlayButton" ImageSource="/kuaishuo2;component/images/appbar.transport.play.rest.png" IsEnabled="{Binding ElementName=SearchPane, Path=DataContext.NetworkAvailable}" Tag="{Binding Index}" Margin="0,0,0,0" Click="PlayButton_Click"/>

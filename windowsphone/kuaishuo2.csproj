@@ -72,6 +72,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BooleanColorConverter.cs" />
+    <Compile Include="BooleanDoubleConverter.cs" />
     <Compile Include="DictionaryRecordList.cs" />
     <Compile Include="InvertedBooleanConverter.cs">
       <SubType>Code</SubType>

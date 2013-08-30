@@ -17,8 +17,10 @@
     shell:SystemTray.IsVisible="True">
     
     <phone:PhoneApplicationPage.Resources>
-        <local:Settings x:Key="settings"/>
         <local:PinyinColorOptions x:Key="colors"/>
+        <local:BooleanDoubleConverter x:Key="FontSize" True="24" False="{StaticResource PhoneFontSizeNormal}"/>
+        <local:VisibilityConverter x:Key="VisibilityConverter" True="Visible" False="Collapsed"/>
+        <local:VisibilityConverter x:Key="InvertedVisibility" True="Collapsed" False="Visible"/>
     </phone:PhoneApplicationPage.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
@@ -51,20 +53,32 @@
                     </Grid.Resources>
                     <ScrollViewer>
                         <StackPanel>
-                            <TextBlock Text="Pinyin Tone Colours" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
-                            <TextBlock Text="Select a colour scheme for Pinyin syllables." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
-                            <toolkit:ListPicker x:Name="PinyinColorPicker" ItemTemplate="{StaticResource PinyinColorItemTemplate}" ItemsSource="{Binding Source={StaticResource colors}}" SelectedIndex="{Binding Source={StaticResource settings}, Path=PinyinColorSetting, Mode=TwoWay}" />
-                            <TextBlock Text="Text-to-Speech Audio Quality" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>
-                            <TextBlock Text="Lo-Fi uses less bandwidth. Hi-Fi is loud and clear." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,10"/>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="use Hi-Fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="92,0,20,0"/>
-                                <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Margin="0,10,0,0" Name="AudioQualityCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=AudioQualitySetting, Mode=TwoWay}" />
+                            <TextBlock Text="Font Size" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                            <TextBlock Text="If this text is too small, tick the box" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" Visibility="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource InvertedVisibility}}"/>
+                            <TextBlock Text="Font sizes increased for readability" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" FontSize="{StaticResource PhoneFontSizeMedium}" Margin="12,0,12,0" Visibility="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource VisibilityConverter}}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,-10,0,5">
+                                <TextBlock Text="large fonts" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="67,0,20,0"/>
+                                <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Name="LargeFontsCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Mode=TwoWay}" />
                             </StackPanel>
-                            <TextBlock Text="Traditional Chinese Characters" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>
-                            <TextBlock Text="Used in Guangzhou, Hong Kong, Macau and Taiwan." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
-                            <StackPanel Orientation="Horizontal">
+                            
+                            <TextBlock Text="Pinyin Tone Colours" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                            <TextBlock Text="Colour scheme for Pinyin syllables" FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource FontSize}}" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0"/>
+                            <StackPanel Margin="0,0,0,15">
+                                <toolkit:ListPicker x:Name="PinyinColorPicker" ItemTemplate="{StaticResource PinyinColorItemTemplate}" ItemsSource="{Binding Source={StaticResource colors}}" SelectedIndex="{Binding Source={StaticResource settings}, Path=PinyinColorSetting, Mode=TwoWay}" />
+                            </StackPanel>
+                            
+                            <TextBlock Text="Text-to-Speech Audio Quality" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                            <TextBlock Text="Hi-Fi is better but uses more data" FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource FontSize}}" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,-10,0,5">
+                                <TextBlock Text="use Hi-Fi" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="92,0,20,0"/>
+                                <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Name="AudioQualityCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=AudioQualitySetting, Mode=TwoWay}" />
+                            </StackPanel>
+                            
+                            <TextBlock Text="Traditional Chinese Characters" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                            <TextBlock Text="Used in Guangzhou, HK, Macau, Taiwan" FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource FontSize}}" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,-10,0,5">
                                 <TextBlock Text="enable" VerticalAlignment="Center" Style="{StaticResource PhoneTextLargeStyle}" Margin="120,0,20,0"/>
-                                <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Margin="0,10,0,0" Name="TraditionalChineseCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=TraditionalChineseSetting, Mode=TwoWay}" />
+                                <CheckBox Content="" Height="Auto" HorizontalAlignment="Left" Name="TraditionalChineseCheckBox" VerticalAlignment="Top" IsChecked="{Binding Source={StaticResource settings}, Path=TraditionalChineseSetting, Mode=TwoWay}" />
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
@@ -115,15 +129,15 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Vertical" Grid.Column="0">
                         <TextBlock Text="Kuaishuo 1.0" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
-                        <TextBlock Text="Thank you for choosing Kuaishuo! Report bugs or request features on Twitter or the Kuaishuo blog." TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
+                        <TextBlock Text="Thank you for using Kuaishuo! Report bugs or request features via Twitter or the Kuaishuo blog." FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource FontSize}}" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0"/>
                         <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://knibb.co.uk/kuaishuo" Content="http://knibb.co.uk/kuaishuo"/>
                         <StackPanel Orientation="Horizontal" Margin="12">
                             <Image Source="/kuaishuo2;component/images/twitterIcon.png" Height="50" Width="50" />
                             <HyperlinkButton Style="{StaticResource Hyperlink_NoUnderline}" FontSize="24" HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://twitter.com/Kuaishuo" Content="@Kuaishuo"/>
                         </StackPanel>
                         <TextBlock Text="CC-CEDICT" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,12,12,0"/>
-                        <TextBlock Text="Kuaishuo uses the CC-CEDICT dictionary: a free, community-maintained resource. For more info:" TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" Margin="12,0,12,0"/>
-                        <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://cc-cedict.org/wiki" Content="http://cc-cedict.org/wiki/"/>
+                        <TextBlock Text="Kuaishuo uses the CC-CEDICT dictionary: a free, community-maintained resource." FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource FontSize}}" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0"/>
+                        <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://cc-cedict.org/wiki" Content="http://cc-cedict.org/wiki"/>
                         <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://creativecommons.org/licenses/by-sa/3.0/" Content="Creative Commons BY-SA 3.0 License" Margin="0,0,0,20"/>
                     </StackPanel>
                 </Grid>
