@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,10 +44,40 @@ namespace kuaishuo2
 
         void LoadListData()
         {
+            ManageAppBarButtons();
             MainViewModel mvm = new MainViewModel();
-            mvm.LoadData(list);
+            List<DictionaryRecord> data = new List<DictionaryRecord>(list);
+            switch (list.SortOrder)
+            {
+                case DictionaryRecordList.ListSortOrder.ReverseChronological:
+                    data.Reverse();
+                    break;
+                case DictionaryRecordList.ListSortOrder.Alphabetical:
+                default:
+                    data.Sort();
+                    break;
+            }
+            mvm.LoadData(data);
             this.DataContext = mvm;
-            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = (list.Count == 0) ? false : true;
+        }
+
+        void ManageAppBarButtons()
+        {
+            ApplicationBarIconButton sortButton = ((ApplicationBarIconButton)ApplicationBar.Buttons[0]);
+            ApplicationBarIconButton emailButton = ((ApplicationBarIconButton)ApplicationBar.Buttons[1]);
+            // disable/enable buttons depending on how many items are in the list
+            emailButton.IsEnabled = (list.Count > 0);
+            sortButton.IsEnabled = (list.Count > 1);
+            // set sort button icon according to current list sort order
+            switch (list.SortOrder)
+            {
+                case DictionaryRecordList.ListSortOrder.Alphabetical:
+                    sortButton.IconUri = new Uri("/Images/sort.time.png", UriKind.Relative);
+                    break;
+                case DictionaryRecordList.ListSortOrder.ReverseChronological:
+                    sortButton.IconUri = new Uri("/Images/sort.alpha.png", UriKind.Relative);
+                    break;
+            }
         }
 
         int previous = -1;
@@ -155,6 +186,20 @@ namespace kuaishuo2
             NavigationService.GoBack();
         }
 
+        void SortButton_Click(object sender, EventArgs e)
+        {
+            switch (list.SortOrder)
+            {
+                case DictionaryRecordList.ListSortOrder.Alphabetical:
+                    list.SortOrder = DictionaryRecordList.ListSortOrder.ReverseChronological;
+                    break;
+                case DictionaryRecordList.ListSortOrder.ReverseChronological:
+                    list.SortOrder = DictionaryRecordList.ListSortOrder.Alphabetical;
+                    break;
+            }
+            LoadListData(); // reload
+        }
+
         void EmailButton_Click(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
@@ -198,6 +243,13 @@ namespace kuaishuo2
         void Settings_Click(object sender, EventArgs e)
         {
             NavigationService.Navigate(new Uri("/SettingsPage.xaml", UriKind.Relative));
+        }
+
+        protected override void OnBackKeyPress(CancelEventArgs e)
+        {
+            App app = (App)Application.Current;
+            ((ListManager2.ManagedList)app.ListManager[list.Name]).Save();
+            base.OnBackKeyPress(e);
         }
     }
 }

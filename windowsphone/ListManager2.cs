@@ -15,7 +15,7 @@ namespace kuaishuo2
         /// <summary>
         /// Wraps DictionaryRecordList to add management functionality.
         /// </summary>
-        class ManagedList : DictionaryRecordList
+        public class ManagedList : DictionaryRecordList
         {
             public string SavePath;
             int _Identifier = -1;

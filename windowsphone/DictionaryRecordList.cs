@@ -29,6 +29,7 @@ namespace kuaishuo2
         // metadata header
         public const string NameHeaderKey = "name";
         const string ReadOnlyHeaderKey = "readonly";
+        const string SortOrderHeaderKey = "sortorder";
 
         /// <summary>
         /// Constructor for new lists where no dictionary file yet exists.
@@ -37,6 +38,7 @@ namespace kuaishuo2
         public DictionaryRecordList(string name)
         {
             Name = name;
+            SortOrder = ListSortOrder.Alphabetical;
         }
 
         /// <summary>
@@ -45,19 +47,26 @@ namespace kuaishuo2
         /// <param name="dictionary">CC_CEDict.WindowsPhone instance containing the entries for the list.</param>
         public DictionaryRecordList(Dictionary dictionary)
         {
-            foreach (DictionaryRecord record in dictionary)
-                base.Add(record);
-
             try
             {
+                // read headers
                 Name = dictionary.Header[NameHeaderKey];
-                ReadOnly = bool.Parse(dictionary.Header[ReadOnlyHeaderKey]);
+                if (dictionary.Header.ContainsKey(ReadOnlyHeaderKey))
+                    ReadOnly = bool.Parse(dictionary.Header[ReadOnlyHeaderKey]);
+                if (dictionary.Header.ContainsKey(SortOrderHeaderKey))
+                    SortOrder = (ListSortOrder)Int32.Parse(dictionary.Header[SortOrderHeaderKey]);
+                
+                // read records
+                foreach (DictionaryRecord record in dictionary)
+                    base.Add(record);
+
+                // release resource on disk
+                dictionary.Dispose();
             }
             catch (Exception)
             {
             }
 
-            this.Sort();
             IsModified = false;
         }
 
@@ -89,12 +98,26 @@ namespace kuaishuo2
             }
         }
 
+        public enum ListSortOrder { Alphabetical = 0, ReverseChronological = 1 };
+        ListSortOrder _SortOrder = ListSortOrder.Alphabetical;
+        public ListSortOrder SortOrder
+        {
+            get
+            {
+                return _SortOrder;
+            }
+            set
+            {
+                _SortOrder = value;
+                IsModified = true;
+            }
+        }
+
         public new void Add(DictionaryRecord record)
         {
             if (this.Contains(record))
                 return;
             base.Add(record);
-            this.Sort();
             IsModified = true;
         }
 
@@ -111,6 +134,7 @@ namespace kuaishuo2
 
             sb.AppendLine(String.Format(HeaderTemplate, NameHeaderKey, this.Name));
             sb.AppendLine(String.Format(HeaderTemplate, ReadOnlyHeaderKey, this.ReadOnly));
+            sb.AppendLine(String.Format(HeaderTemplate, SortOrderHeaderKey, (int)this.SortOrder));
 
             foreach (DictionaryRecord record in this)
                 sb.AppendLine(record.ToString());
