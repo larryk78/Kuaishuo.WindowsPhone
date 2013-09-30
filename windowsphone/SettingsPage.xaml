@@ -128,7 +128,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Vertical" Grid.Column="0">
-                        <TextBlock Text="Kuaishuo 1.0" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
+                        <TextBlock Text="Kuaishuo 1.0.1" Style="{StaticResource PhoneTextLargeStyle}" Margin="12,0,12,0"/>
                         <TextBlock Text="Thank you for using Kuaishuo! Report bugs or request features via Twitter or the Kuaishuo blog." FontSize="{Binding Source={StaticResource settings}, Path=LargeFontsSetting, Converter={StaticResource FontSize}}" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0"/>
                         <HyperlinkButton HorizontalAlignment="Left" TargetName="_blank" NavigateUri="http://knibb.co.uk/kuaishuo" Content="http://knibb.co.uk/kuaishuo"/>
                         <StackPanel Orientation="Horizontal" Margin="12">
